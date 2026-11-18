@@ -1,0 +1,2454 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>DENSIRE HAROONABAD — WhatsApp Menu &amp; QR Ordering</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    // Early image handlers so <img> load/error events never race script parsing
+    window.getFallbackVectorSvg = function (key) {
+      const stroke = '#FACC15';
+      const icons = {
+        deal: '<svg viewBox="0 0 64 64" class="w-12 h-12" fill="none" stroke="' + stroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="24" width="44" height="30" rx="5"/><path d="M8 18h48v6H8z"/><path d="M32 18v36"/><path d="M32 18c-5-7-13-7-13-2s8 2 13 2zm0 0c5-7 13-7 13-2s-8 2-13 2z"/></svg>',
+        burger: '<svg viewBox="0 0 64 64" class="w-12 h-12" fill="none" stroke="' + stroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 28c0-10 9-16 20-16s20 6 20 16H12z"/><path d="M10 35h44"/><path d="M12 42c4 3 8-3 12 0s8-3 12 0 8-3 12 0 4 0 4 0"/><path d="M14 48h36a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4z"/></svg>',
+        grill: '<svg viewBox="0 0 64 64" class="w-12 h-12" fill="none" stroke="' + stroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 29c0-9 9-15 20-15s20 6 20 15H12z"/><path d="M22 10c0 3-2 4-2 7m12-9c0 3-2 4-2 7m12-5c0 3-2 4-2 7"/><rect x="10" y="34" width="44" height="6" rx="3"/><path d="M14 45h36a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4z"/></svg>',
+        pizza: '<svg viewBox="0 0 64 64" class="w-12 h-12" fill="none" stroke="' + stroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M32 10L10 50c14 6 30 6 44 0L32 10z"/><path d="M13 44c12 5 26 5 38 0"/><circle cx="30" cy="27" r="3"/><circle cx="38" cy="36" r="3"/><circle cx="24" cy="38" r="2.5"/></svg>',
+        roll: '<svg viewBox="0 0 64 64" class="w-12 h-12" fill="none" stroke="' + stroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="22" width="32" height="20" rx="10" transform="rotate(-32 32 32)"/><path d="M24 26l14 14M29 21l14 14"/></svg>',
+        snack: '<svg viewBox="0 0 64 64" class="w-12 h-12" fill="none" stroke="' + stroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 28h28l-4 24H22l-4-24z"/><path d="M22 28V14h4v14m5 0V11h4v17m5 0V15h4v13"/></svg>',
+        drink: '<svg viewBox="0 0 64 64" class="w-12 h-12" fill="none" stroke="' + stroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 22h24l-3 30H23l-3-30z"/><path d="M17 22h30"/><path d="M34 22l5-11h6"/><path d="M22 34h20"/></svg>'
+      };
+      return icons[key] || icons.burger;
+    };
+
+    window.handleImgLoad = function (imgEl) {
+      if (!imgEl) return;
+      imgEl.classList.add('is-loaded');
+      const track = imgEl.parentElement;
+      if (track) track.classList.remove('img-shimmer-track');
+    };
+
+    window.handleImgError = function (imgEl, fallbackKey) {
+      if (!imgEl) return;
+      imgEl.onerror = null;
+      imgEl.classList.add('hidden');
+      const track = imgEl.parentElement;
+      if (!track) return;
+      track.classList.remove('img-shimmer-track');
+      const fallbackBox = track.querySelector('.svg-fallback-box');
+      if (fallbackBox) {
+        fallbackBox.innerHTML = window.getFallbackVectorSvg(fallbackKey || 'burger');
+        fallbackBox.classList.remove('hidden');
+      }
+    };
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            obsidian: '#0A0A0C',
+            surface: '#121216',
+            elevated: '#1A1A20',
+            brand: '#FACC15',
+            brandHover: '#EAB308',
+            wa: '#22C55E',
+            waDark: '#16A34A'
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg-canvas: #0A0A0C;
+      --bg-surface: #121216;
+      --bg-elevated: #1A1A20;
+      --brand-gold: #FACC15;
+      --wa-green: #22C55E;
+      --spring-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      background-color: var(--bg-canvas);
+      color: #F4F4F6;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Hide scrollbars cleanly on pill strips */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Image shimmer track + smooth fade/scale reveal */
+    .img-shimmer-track {
+      background: linear-gradient(
+        110deg,
+        #15151a 25%,
+        #22222b 37%,
+        #15151a 63%
+      );
+      background-size: 200% 100%;
+      animation: shimmerSweep 1.35s ease-in-out infinite;
+    }
+
+    @keyframes shimmerSweep {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .food-photo {
+      opacity: 0;
+      transform: scale(1.04);
+      transition: opacity 0.45s var(--spring-ease), transform 0.55s var(--spring-ease);
+    }
+    .food-photo.is-loaded {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .group:hover .food-photo.is-loaded {
+      transform: scale(1.05);
+    }
+
+    /* Staggered card entrance */
+    @keyframes cardReveal {
+      0% {
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .animate-card-reveal {
+      opacity: 0;
+      animation: cardReveal 0.42s var(--spring-ease) forwards;
+    }
+
+    /* View switch fade */
+    @keyframes viewFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-view-in {
+      animation: viewFadeIn 0.34s var(--spring-ease) forwards;
+    }
+
+    /* Cart bar spring pop */
+    @keyframes cartPop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+    .animate-cart-pop {
+      animation: cartPop 0.32s var(--spring-ease);
+    }
+
+    /* Floating +1 toast */
+    @keyframes toastFloat {
+      0% { opacity: 0; transform: translate(-50%, 14px) scale(0.94); }
+      18% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+      82% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -10px) scale(0.96); }
+    }
+    .micro-toast {
+      animation: toastFloat 1.5s var(--spring-ease) forwards;
+    }
+
+    /* Sliding category pill highlight */
+    #pillActiveGlider {
+      transition: transform 0.32s var(--spring-ease), width 0.32s var(--spring-ease);
+      will-change: transform, width;
+    }
+
+    /* Bottom sheet slide-up transitions */
+    .sheet-backdrop {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+    }
+    .sheet-backdrop.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .sheet-panel {
+      transform: translateY(100%);
+      transition: transform 0.38s var(--spring-ease);
+    }
+    .sheet-backdrop.is-open .sheet-panel {
+      transform: translateY(0);
+    }
+    @media (min-width: 640px) {
+      .sheet-panel {
+        transform: translateY(20px) scale(0.97);
+        opacity: 0;
+        transition: transform 0.32s var(--spring-ease), opacity 0.25s ease;
+      }
+      .sheet-backdrop.is-open .sheet-panel {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-obsidian text-zinc-100 antialiased selection:bg-brand selection:text-obsidian pb-28">
+
+  <!-- =========================================================
+       STICKY TOP NAVIGATION BAR
+  ========================================================== -->
+  <header class="sticky top-0 z-40 bg-obsidian/90 backdrop-blur-xl border-b border-white/[0.07]">
+    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+      <!-- Brand Logo Button (Returns to Categories Home) -->
+      <button type="button" onclick="goHomeCategories()" class="flex items-center gap-3 text-left group focus:outline-none">
+        <div class="w-11 h-11 rounded-xl bg-black border border-brand/30 flex items-center justify-center shrink-0 shadow-lg shadow-black/50 group-active:scale-95 transition-transform">
+          <!-- Official DENSIRE Diamond + Cutlery + Chef Hat SVG -->
+          <svg viewBox="0 0 120 110" class="w-9 h-9" aria-hidden="true">
+            <g transform="translate(54, 56) rotate(-45)">
+              <rect x="-32" y="-32" width="64" height="64" rx="8" fill="none" stroke="#FACC15" stroke-width="2.4" />
+              <rect x="-26" y="-26" width="52" height="52" rx="6" fill="#FACC15" />
+            </g>
+            <!-- Fork, Knife, Spoon at 45 deg top-right -->
+            <g transform="translate(76, 30) rotate(45)" fill="#FFFFFF">
+              <rect x="-12" y="-12" width="1.8" height="9" rx="0.8" />
+              <rect x="-9.2" y="-12" width="1.8" height="9" rx="0.8" />
+              <rect x="-6.4" y="-12" width="1.8" height="9" rx="0.8" />
+              <rect x="-12" y="-4" width="7.4" height="3.2" rx="1.2" />
+              <rect x="-9.6" y="-1.5" width="2.6" height="17" rx="1.2" />
+              <path d="M-1 -13 C2.5 -13 3.5 -6 3.5 -1 L-1 -1 Z" />
+              <rect x="-1" y="-1.5" width="2.8" height="17" rx="1.2" />
+              <ellipse cx="9.5" cy="-7.5" rx="3.8" ry="5.5" />
+              <rect x="8.2" y="-2.5" width="2.6" height="18" rx="1.2" />
+            </g>
+            <!-- Chef Hat inside top diamond -->
+            <path d="M44 37 C40 37 38 33 41 30 C41 25 48 23 52 26 C56 23 63 25 63 30 C66 33 64 37 60 37 L59 42 L45 42 Z" fill="#0A0A0C" />
+            <!-- Split-color DENSIRE wordmark -->
+            <text x="34" y="65" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="18.5" letter-spacing="0.5" fill="#0A0A0C">DENS</text>
+            <text x="84" y="65" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="18.5" letter-spacing="0.5" fill="#FFFFFF">IRE</text>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span id="headerStoreName" class="font-extrabold text-sm sm:text-base tracking-tight text-white truncate">DENSIRE HAROONABAD</span>
+            <span id="headerTableBadge" class="hidden px-2 py-0.5 rounded-md bg-brand text-obsidian font-mono font-bold text-[11px] uppercase tracking-wider shrink-0">
+              Table #1
+            </span>
+          </div>
+          <div class="flex items-center gap-1.5 text-[11px] text-zinc-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-wa animate-pulse"></span>
+            <span>Dine Desired • Haroonabad</span>
+          </div>
+        </div>
+      </button>
+
+      <!-- Right Controls: Owner Setup & QR -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" onclick="openSetupModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface hover:bg-elevated border border-white/[0.09] text-xs font-semibold text-zinc-200 active:scale-95 transition-all">
+          <svg class="w-4 h-4 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5" />
+            <rect x="14" y="3" width="7" height="7" rx="1.5" />
+            <rect x="3" y="14" width="7" height="7" rx="1.5" />
+            <path d="M14 14h3v3h-3zm4 4h3v3h-3zm-4 3h2m5-7v2" />
+          </svg>
+          <span>Setup &amp; QR</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       MAIN CONTAINER
+  ========================================================== -->
+  <main class="max-w-4xl mx-auto px-4 pt-4">
+
+    <!-- Compact Brand Banner + Instant Search -->
+    <section class="rounded-2xl bg-gradient-to-br from-surface via-surface to-elevated border border-white/[0.08] p-4 sm:p-5 mb-5 relative overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-brand/[0.06] blur-2xl pointer-events-none"></div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <!-- Full DENSIRE Emblem -->
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-black border border-brand/35 flex items-center justify-center shrink-0 shadow-xl">
+            <svg viewBox="0 0 140 124" class="w-14 h-14 sm:w-16 sm:h-16" aria-hidden="true">
+              <g transform="translate(60, 60) rotate(-45)">
+                <rect x="-36" y="-36" width="72" height="72" rx="9" fill="none" stroke="#FACC15" stroke-width="2.5" />
+                <rect x="-29" y="-29" width="58" height="58" rx="7" fill="#FACC15" />
+              </g>
+              <g transform="translate(84, 31) rotate(45)" fill="#FFFFFF">
+                <rect x="-12" y="-12" width="1.8" height="9" rx="0.8" />
+                <rect x="-9.2" y="-12" width="1.8" height="9" rx="0.8" />
+                <rect x="-6.4" y="-12" width="1.8" height="9" rx="0.8" />
+                <rect x="-12" y="-4" width="7.4" height="3.2" rx="1.2" />
+                <rect x="-9.6" y="-1.5" width="2.6" height="17" rx="1.2" />
+                <path d="M-1 -13 C2.5 -13 3.5 -6 3.5 -1 L-1 -1 Z" />
+                <rect x="-1" y="-1.5" width="2.8" height="17" rx="1.2" />
+                <ellipse cx="9.5" cy="-7.5" rx="3.8" ry="5.5" />
+                <rect x="8.2" y="-2.5" width="2.6" height="18" rx="1.2" />
+              </g>
+              <path d="M49 39 C45 39 43 35 46 32 C46 27 53 25 57 28 C61 25 68 27 68 32 C71 35 69 39 65 39 L64 44 L50 44 Z" fill="#0A0A0C" />
+              <text x="38" y="69" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="20" letter-spacing="0.5" fill="#0A0A0C">DENS</text>
+              <text x="93" y="69" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="20" letter-spacing="0.5" fill="#FFFFFF">IRE</text>
+              <text x="86" y="83" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="8.5" fill="#FACC15">Dine Desired</text>
+            </svg>
+          </div>
+
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-brand text-obsidian font-bold text-[10px] uppercase tracking-wider mb-1">
+              Fast Food Restaurant
+            </div>
+            <h1 class="text-lg sm:text-xl font-extrabold text-white tracking-tight leading-tight">
+              A perfect meal stop
+            </h1>
+            <p class="text-xs text-zinc-400 mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span>Haroonabad, Punjab</span>
+              <span class="text-zinc-600">•</span>
+              <span class="text-brand font-semibold" id="bannerFreeDeliveryTag">Free Delivery on Rs. 500+</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Live Search Bar -->
+        <div class="relative w-full sm:w-64">
+          <svg class="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" stroke-linecap="round" />
+          </svg>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search deals, pizza, zinger..."
+            oninput="handleSearchInput(this.value)"
+            class="w-full pl-10 pr-8 py-2.5 rounded-xl bg-obsidian/90 border border-white/[0.09] focus:border-brand/70 focus:outline-none text-xs sm:text-sm text-white placeholder-zinc-500 transition-colors"
+          />
+          <button
+            id="clearSearchBtn"
+            type="button"
+            onclick="clearSearch()"
+            class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center text-xs"
+            aria-label="Clear search"
+          >
+            &times;
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         STEP 1 VIEW: VISUAL CATEGORIES HOME GRID
+    ========================================================== -->
+    <section id="categoriesHomeView" class="animate-view-in">
+      <div class="flex items-center justify-between mb-3.5">
+        <div>
+          <h2 class="text-base sm:text-lg font-extrabold text-white tracking-tight">Explore Menu Categories</h2>
+          <p class="text-xs text-zinc-400">Tap a category to browse items &amp; customize your order</p>
+        </div>
+        <span id="totalMenuCountBadge" class="px-2.5 py-1 rounded-lg bg-surface border border-white/[0.07] font-mono text-[11px] text-zinc-400 tabular-nums">
+          35 Items
+        </span>
+      </div>
+
+      <div id="categoryGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+        <!-- Populated dynamically by renderCategoryGrid() -->
+      </div>
+    </section>
+
+    <!-- =========================================================
+         STEP 2 VIEW: CATEGORY ITEMS SCREEN / SEARCH RESULTS
+    ========================================================== -->
+    <section id="categoryItemsView" class="hidden">
+      <!-- Sticky Sub-Header with Back Button & Quick-Switch Pills -->
+      <div class="sticky top-16 z-30 -mx-4 px-4 pt-2.5 pb-3 bg-obsidian/95 backdrop-blur-xl border-b border-white/[0.06] mb-4">
+        <div class="flex items-center justify-between gap-2 mb-2.5">
+          <button
+            type="button"
+            onclick="goHomeCategories()"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface hover:bg-elevated border border-white/[0.09] text-xs font-bold text-brand active:scale-95 transition-all"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+            <span>Categories</span>
+          </button>
+
+          <div class="text-center min-w-0 flex-1">
+            <h2 id="activeCategoryTitle" class="text-sm sm:text-base font-extrabold text-white truncate">Den-Deals</h2>
+            <p id="activeCategorySubtitle" class="text-[11px] text-zinc-400 truncate">Combo Value Deals</p>
+          </div>
+
+          <span id="activeCategoryCount" class="px-2.5 py-1 rounded-lg bg-surface border border-white/[0.07] font-mono text-[11px] text-zinc-300 tabular-nums shrink-0">
+            20
+          </span>
+        </div>
+
+        <!-- Horizontal Quick-Switch Category Strip with Sliding Gold Glider -->
+        <div id="categoryPillsStrip" class="relative flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <div id="pillActiveGlider" class="absolute top-0.5 bottom-0.5 left-0 rounded-xl bg-brand pointer-events-none z-0"></div>
+          <!-- Pills populated by renderQuickPills() -->
+        </div>
+      </div>
+
+      <!-- Items Grid -->
+      <div id="menuItemsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <!-- Populated dynamically by renderMenuItems() -->
+      </div>
+
+      <!-- Empty Search State -->
+      <div id="emptySearchState" class="hidden text-center py-12 px-4 rounded-2xl bg-surface border border-white/[0.07]">
+        <p class="text-sm font-bold text-white mb-1">No matching items found</p>
+        <p class="text-xs text-zinc-400 mb-4">Try searching for Zinger, Pizza, Deal, Fries, or Shawarma</p>
+        <button type="button" onclick="clearSearch(); goHomeCategories();" class="px-4 py-2 rounded-xl bg-brand text-obsidian font-bold text-xs">
+          Back to All Categories
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       STICKY BOTTOM CART BAR
+  ========================================================== -->
+  <div id="stickyCartBar" class="fixed bottom-0 inset-x-0 z-40 translate-y-full transition-transform duration-300 ease-out pointer-events-none">
+    <div class="max-w-4xl mx-auto px-4 pb-4">
+      <div id="stickyCartCard" class="pointer-events-auto rounded-2xl bg-surface/95 backdrop-blur-xl border border-brand/40 shadow-2xl shadow-black/80 p-3">
+        <!-- Free Delivery Mini Progress -->
+        <div class="mb-2.5">
+          <div class="flex items-center justify-between text-[11px] mb-1">
+            <span id="barDeliveryStatusText" class="font-semibold text-zinc-300">Add Rs. 150 more for FREE Haroonabad delivery</span>
+            <span id="barDeliveryBadge" class="font-mono font-bold text-brand">Rs. 500 Goal</span>
+          </div>
+          <div class="w-full h-1.5 rounded-full bg-obsidian overflow-hidden">
+            <div id="barDeliveryProgress" class="h-full rounded-full bg-gradient-to-r from-brand to-wa transition-all duration-300" style="width: 40%;"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-brand text-obsidian font-mono font-extrabold text-sm flex items-center justify-center tabular-nums" id="barItemCount">
+              0
+            </div>
+            <div>
+              <div class="text-[11px] text-zinc-400 font-medium">Cart Subtotal</div>
+              <div class="font-mono font-extrabold text-base text-white tabular-nums" id="barSubtotal">Rs. 0</div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onclick="openCheckoutModal()"
+            class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-wa hover:bg-waDark text-obsidian font-extrabold text-xs sm:text-sm shadow-lg shadow-wa/20 active:scale-95 transition-all"
+          >
+            <span>Review &amp; Order</span>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       ITEM CRUST & EXTRAS CUSTOMIZER BOTTOM SHEET
+  ========================================================== -->
+  <div id="customizerBackdrop" class="sheet-backdrop fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="closeCustomizerOnBackdrop(event)">
+    <div class="sheet-panel w-full max-w-md rounded-t-3xl sm:rounded-3xl bg-surface border border-white/[0.1] max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="p-4 border-b border-white/[0.08] flex items-center justify-between">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-brand">Customize Item</span>
+          <h3 id="custItemName" class="text-base font-extrabold text-white">Chicken Fajita Pizza</h3>
+        </div>
+        <button type="button" onclick="closeCustomizer()" class="w-8 h-8 rounded-xl bg-elevated text-zinc-400 hover:text-white flex items-center justify-center text-lg">&times;</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto space-y-4">
+        <!-- Size Selection (for sized items like Pizza / Fries / Drinks) -->
+        <div id="custSizeSection" class="hidden">
+          <label class="block text-xs font-bold text-zinc-300 mb-2">Choose Size</label>
+          <div id="custSizeOptions" class="grid grid-cols-3 gap-2"></div>
+        </div>
+
+        <!-- Extras / Crust Checkboxes -->
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 mb-2">Crust &amp; Add-On Extras (Optional)</label>
+          <div id="custExtrasList" class="space-y-2"></div>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-white/[0.08] bg-obsidian/60 flex items-center justify-between gap-3">
+        <div>
+          <div class="text-[11px] text-zinc-400">Item Total</div>
+          <div id="custTotalPrice" class="font-mono font-extrabold text-base text-brand tabular-nums">Rs. 550</div>
+        </div>
+        <button type="button" onclick="confirmCustomItem()" class="px-5 py-3 rounded-xl bg-brand hover:bg-brandHover text-obsidian font-extrabold text-xs sm:text-sm active:scale-95 transition-all">
+          + Add Customized Item
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       CHECKOUT & WHATSAPP RECEIPT BOTTOM SHEET
+  ========================================================== -->
+  <div id="checkoutBackdrop" class="sheet-backdrop fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="closeCheckoutOnBackdrop(event)">
+    <div class="sheet-panel w-full max-w-lg rounded-t-3xl sm:rounded-3xl bg-surface border border-white/[0.1] max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
+      <!-- Header -->
+      <div class="p-4 border-b border-white/[0.08] flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="text-base font-extrabold text-white">Your DENSIRE Order</h3>
+          <p class="text-[11px] text-zinc-400">Direct WhatsApp Checkout • 0% Commission</p>
+        </div>
+        <button type="button" onclick="closeCheckoutModal()" class="w-8 h-8 rounded-xl bg-elevated text-zinc-400 hover:text-white flex items-center justify-center text-lg">&times;</button>
+      </div>
+
+      <!-- Scrollable Checkout Body -->
+      <div class="p-4 overflow-y-auto space-y-4">
+        <!-- Cart Items List -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-zinc-300">Selected Items</span>
+            <button type="button" onclick="clearCart()" class="text-[11px] text-red-400 hover:underline font-semibold">Clear Cart</button>
+          </div>
+          <div id="checkoutCartList" class="space-y-2"></div>
+        </div>
+
+        <!-- Smart "Complete Your Meal" Upsells -->
+        <div class="rounded-2xl bg-elevated/80 border border-brand/25 p-3">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-extrabold text-brand">Complete Your Meal</span>
+            <span id="upsellHintTag" class="text-[10px] font-semibold text-zinc-300">1-Tap Add-Ons</span>
+          </div>
+          <div id="checkoutUpsellChips" class="grid grid-cols-2 gap-2"></div>
+        </div>
+
+        <!-- Order Type Switch: Delivery vs Dine-In -->
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 mb-2">Order Type</label>
+          <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-obsidian border border-white/[0.08]">
+            <button type="button" id="btnTypeDelivery" onclick="setOrderType('delivery')" class="py-2 rounded-lg text-xs font-extrabold transition-all bg-brand text-obsidian">
+              Home Delivery
+            </button>
+            <button type="button" id="btnTypeDineIn" onclick="setOrderType('dinein')" class="py-2 rounded-lg text-xs font-extrabold transition-all text-zinc-400 hover:text-white">
+              Dine-In (Table)
+            </button>
+          </div>
+        </div>
+
+        <!-- Dine-In Table Input -->
+        <div id="dineInFields" class="hidden">
+          <label class="block text-xs font-bold text-zinc-300 mb-1.5">Table Number *</label>
+          <input
+            id="custTableInput"
+            type="text"
+            placeholder="e.g., 4"
+            oninput="updateReceiptPreview()"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-white/[0.1] focus:border-brand focus:outline-none text-sm text-white font-mono"
+          />
+        </div>
+
+        <!-- Delivery Details with Auto-Fill & Haroonabad Colony Quick-Pills -->
+        <div id="deliveryFields" class="space-y-3">
+          <div id="savedProfileBanner" class="hidden items-center justify-between px-3 py-2 rounded-xl bg-wa/10 border border-wa/25 text-[11px] text-wa">
+            <span class="font-semibold">Saved Haroonabad details auto-filled</span>
+            <button type="button" onclick="clearSavedCustomerProfile()" class="underline font-bold text-zinc-300 hover:text-white">Clear</button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-[11px] font-bold text-zinc-400 mb-1">Your Name *</label>
+              <input
+                id="custNameInput"
+                type="text"
+                placeholder="e.g., Ali Raza"
+                oninput="handleCustomerFieldChange()"
+                class="w-full px-3 py-2.5 rounded-xl bg-obsidian border border-white/[0.1] focus:border-brand focus:outline-none text-xs sm:text-sm text-white"
+              />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-zinc-400 mb-1">Mobile Number *</label>
+              <input
+                id="custPhoneInput"
+                type="tel"
+                placeholder="0300-1234567"
+                oninput="handleCustomerFieldChange()"
+                class="w-full px-3 py-2.5 rounded-xl bg-obsidian border border-white/[0.1] focus:border-brand focus:outline-none text-xs sm:text-sm text-white font-mono"
+              />
+            </div>
+          </div>
+
+          <!-- Haroonabad Locality Quick-Pills -->
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-400 mb-1.5">Quick-Select Haroonabad Area</label>
+            <div id="haroonabadAreaPills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-400 mb-1">House / Street &amp; Colony Address *</label>
+            <input
+              id="custAddressInput"
+              type="text"
+              placeholder="House #, Street #, Colony / Road in Haroonabad"
+              oninput="handleCustomerFieldChange()"
+              class="w-full px-3 py-2.5 rounded-xl bg-obsidian border border-white/[0.1] focus:border-brand focus:outline-none text-xs sm:text-sm text-white"
+            />
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 mb-1.5">Payment Method</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" data-pay="Cash" onclick="setPaymentMethod('Cash')" class="pay-pill py-2 rounded-xl border text-xs font-bold transition-all bg-brand/15 border-brand text-brand">
+              Cash
+            </button>
+            <button type="button" data-pay="JazzCash" onclick="setPaymentMethod('JazzCash')" class="pay-pill py-2 rounded-xl border text-xs font-bold transition-all bg-obsidian border-white/[0.09] text-zinc-400">
+              JazzCash
+            </button>
+            <button type="button" data-pay="Easypaisa" onclick="setPaymentMethod('Easypaisa')" class="pay-pill py-2 rounded-xl border text-xs font-bold transition-all bg-obsidian border-white/[0.09] text-zinc-400">
+              Easypaisa
+            </button>
+          </div>
+        </div>
+
+        <!-- Kitchen Notes -->
+        <div>
+          <label class="block text-[11px] font-bold text-zinc-400 mb-1">Kitchen Instructions (Optional)</label>
+          <input
+            id="custNotesInput"
+            type="text"
+            placeholder="e.g., Extra spicy, extra ketchup, ring bell..."
+            oninput="updateReceiptPreview()"
+            class="w-full px-3 py-2 rounded-xl bg-obsidian border border-white/[0.1] focus:border-brand focus:outline-none text-xs text-white"
+          />
+        </div>
+
+        <!-- Bill Summary -->
+        <div class="rounded-2xl bg-obsidian border border-white/[0.08] p-3.5 space-y-1.5 text-xs">
+          <div class="flex justify-between text-zinc-400">
+            <span>Subtotal</span>
+            <span id="sumSubtotal" class="font-mono font-semibold text-white tabular-nums">Rs. 0</span>
+          </div>
+          <div class="flex justify-between text-zinc-400">
+            <span id="sumDeliveryLabel">Haroonabad Delivery</span>
+            <span id="sumDeliveryFee" class="font-mono font-semibold text-white tabular-nums">Rs. 80</span>
+          </div>
+          <div class="pt-2 border-t border-white/[0.08] flex justify-between text-sm font-extrabold text-white">
+            <span>Grand Total</span>
+            <span id="sumGrandTotal" class="font-mono text-brand tabular-nums">Rs. 0</span>
+          </div>
+        </div>
+
+        <!-- Live WhatsApp Receipt Preview -->
+        <div>
+          <div class="text-[11px] font-bold text-wa mb-1">Live WhatsApp Receipt Preview</div>
+          <pre id="waReceiptPreview" class="p-3 rounded-xl bg-[#0B1F13] border border-wa/30 text-[11px] text-emerald-100 font-mono whitespace-pre-wrap leading-relaxed"></pre>
+        </div>
+
+        <!-- Validation Alert -->
+        <div id="checkoutErrorBox" class="hidden p-3 rounded-xl bg-red-500/15 border border-red-500/40 text-xs font-semibold text-red-300"></div>
+      </div>
+
+      <!-- Sticky Send Button -->
+      <div class="p-4 border-t border-white/[0.08] bg-obsidian/80 shrink-0">
+        <button
+          type="button"
+          onclick="sendOrderToWhatsApp()"
+          class="w-full py-3.5 rounded-2xl bg-wa hover:bg-waDark text-obsidian font-extrabold text-sm flex items-center justify-center gap-2 shadow-xl shadow-wa/25 active:scale-[0.99] transition-all"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.5.07-1.14.1-1.84-.12-.43-.14-.98-.32-1.69-.63-2.97-1.28-4.91-4.27-5.06-4.47-.15-.2-1.21-1.61-1.21-3.07 0-1.46.76-2.18 1.03-2.48.27-.3.59-.37.79-.37.2 0 .39 0 .56.01.18.01.42-.07.66.5.24.59.83 2.03.9 2.18.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.38-.45.51-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.65-.07.18-.2.74-.86.94-1.16.2-.3.39-.25.66-.15.27.1 1.71.81 2 .95.3.15.49.22.56.34.07.13.07.73-.17 1.41z" />
+          </svg>
+          <span>Send Order on WhatsApp</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       OWNER CONTROL PANEL: SETUP, QR STICKER & MENU EDITOR
+  ========================================================== -->
+  <div id="setupBackdrop" class="sheet-backdrop fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="closeSetupOnBackdrop(event)">
+    <div class="sheet-panel w-full max-w-2xl rounded-t-3xl sm:rounded-3xl bg-surface border border-white/[0.1] max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
+      <!-- Modal Header & Tabs -->
+      <div class="p-4 border-b border-white/[0.08] shrink-0">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-base font-extrabold text-white">DENSIRE Owner Setup &amp; QR</h3>
+            <p class="text-[11px] text-zinc-400">Generate Table QR Stickers &amp; Manage Live Menu</p>
+          </div>
+          <button type="button" onclick="closeSetupModal()" class="w-8 h-8 rounded-xl bg-elevated text-zinc-400 hover:text-white flex items-center justify-center text-lg">&times;</button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-obsidian border border-white/[0.08]">
+          <button type="button" id="tabBtnQr" onclick="switchSetupTab('qr')" class="py-2 rounded-lg text-xs font-extrabold bg-brand text-obsidian">
+            Store &amp; Table QR
+          </button>
+          <button type="button" id="tabBtnMenu" onclick="switchSetupTab('menu')" class="py-2 rounded-lg text-xs font-extrabold text-zinc-400 hover:text-white">
+            Menu &amp; Price Editor
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 1: Store & Printable QR Generator -->
+      <div id="setupTabQr" class="p-4 overflow-y-auto space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-400 mb-1">Restaurant Name</label>
+            <input id="cfgStoreName" type="text" class="w-full px-3 py-2 rounded-xl bg-obsidian border border-white/[0.1] text-xs text-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-400 mb-1">WhatsApp Number (923...)</label>
+            <input id="cfgWhatsapp" type="text" class="w-full px-3 py-2 rounded-xl bg-obsidian border border-white/[0.1] text-xs text-white font-mono" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-400 mb-1">Delivery Fee (Rs.)</label>
+            <input id="cfgDeliveryFee" type="number" class="w-full px-3 py-2 rounded-xl bg-obsidian border border-white/[0.1] text-xs text-white font-mono" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-400 mb-1">Free Delivery Minimum (Rs.)</label>
+            <input id="cfgFreeMin" type="number" class="w-full px-3 py-2 rounded-xl bg-obsidian border border-white/[0.1] text-xs text-white font-mono" />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-2">
+          <button type="button" onclick="saveStoreSettingsFromForm()" class="px-4 py-2 rounded-xl bg-brand text-obsidian font-extrabold text-xs">
+            Save Store Settings
+          </button>
+          <span id="cfgSaveToast" class="text-xs font-semibold text-wa hidden">Settings saved!</span>
+        </div>
+
+        <hr class="border-white/[0.08]" />
+
+        <!-- Printable Table QR Sticker Generator -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-extrabold text-white mb-1">Generate Table QR Sticker</label>
+              <p class="text-[11px] text-zinc-400">Enter a table number (or leave blank for general Instagram/delivery QR)</p>
+            </div>
+            <div class="flex gap-2">
+              <input
+                id="qrTableNumberInput"
+                type="text"
+                value="1"
+                placeholder="Table # (e.g. 1)"
+                oninput="renderPrintableStickerCanvas()"
+                class="w-full px-3 py-2 rounded-xl bg-obsidian border border-white/[0.1] text-xs text-white font-mono"
+              />
+              <button type="button" onclick="renderPrintableStickerCanvas()" class="px-3.5 py-2 rounded-xl bg-elevated border border-white/[0.1] text-xs font-bold text-brand shrink-0">
+                Refresh
+              </button>
+            </div>
+            <div class="text-[11px] text-zinc-400 break-all font-mono bg-obsidian p-2.5 rounded-xl border border-white/[0.06]" id="qrEncodedUrlLabel"></div>
+            <button type="button" onclick="downloadTableStickerPng()" class="w-full py-2.5 rounded-xl bg-wa text-obsidian font-extrabold text-xs shadow-lg shadow-wa/20">
+              Download Printable Table Sticker PNG
+            </button>
+          </div>
+
+          <div class="flex flex-col items-center justify-center bg-obsidian p-3 rounded-2xl border border-white/[0.08]">
+            <canvas id="tableStickerCanvas" width="320" height="400" class="w-56 h-auto rounded-xl shadow-xl"></canvas>
+            <div id="hiddenQrHolder" class="hidden"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Quick Menu & Price Editor + Google Sheets Sync -->
+      <div id="setupTabMenu" class="hidden p-4 overflow-y-auto space-y-4">
+        <!-- Google Sheets CSV Sync -->
+        <div class="p-3 rounded-2xl bg-obsidian border border-white/[0.08] space-y-2">
+          <div class="text-xs font-extrabold text-brand">Google Sheets Live Menu Sync (Optional)</div>
+          <p class="text-[11px] text-zinc-400">Columns: <code class="text-zinc-300">id,category,name,price,desc,image,available</code></p>
+          <div class="flex gap-2">
+            <input id="cfgSheetCsvUrl" type="url" placeholder="Paste published Google Sheet CSV URL..." class="flex-1 px-3 py-2 rounded-xl bg-surface border border-white/[0.1] text-xs text-white" />
+            <button type="button" onclick="syncFromGoogleSheet()" class="px-3.5 py-2 rounded-xl bg-brand text-obsidian font-extrabold text-xs shrink-0">
+              Sync Now
+            </button>
+          </div>
+          <div id="sheetSyncStatus" class="text-[11px] text-zinc-400"></div>
+        </div>
+
+        <!-- Add New Item Form -->
+        <div class="p-3 rounded-2xl bg-obsidian border border-white/[0.08] space-y-2.5">
+          <div class="text-xs font-extrabold text-white">+ Add New Menu Item</div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <select id="newItemCat" class="px-2.5 py-2 rounded-xl bg-surface border border-white/[0.1] text-xs text-white">
+              <option value="Den-Deals">Den-Deals</option>
+              <option value="Den-Burgers">Den-Burgers</option>
+              <option value="Grill Burgers">Grill Burgers</option>
+              <option value="Den-Pizza">Den-Pizza</option>
+              <option value="Den-Rolls">Den-Rolls</option>
+              <option value="Den-Snacks">Den-Snacks</option>
+              <option value="Drinks & Desserts">Drinks &amp; Desserts</option>
+            </select>
+            <input id="newItemName" type="text" placeholder="Item Name" class="px-2.5 py-2 rounded-xl bg-surface border border-white/[0.1] text-xs text-white" />
+            <input id="newItemPrice" type="number" placeholder="Price (Rs.)" class="px-2.5 py-2 rounded-xl bg-surface border border-white/[0.1] text-xs text-white font-mono" />
+            <button type="button" onclick="addNewMenuItem()" class="px-3 py-2 rounded-xl bg-brand text-obsidian font-extrabold text-xs">
+              Add Item
+            </button>
+          </div>
+        </div>
+
+        <!-- Inline Price & Stock List -->
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-zinc-300">Edit Prices &amp; Availability</span>
+          <button type="button" onclick="resetDefaultMenu()" class="text-[11px] text-red-400 hover:underline font-semibold">Reset Default 35 Items</button>
+        </div>
+        <div id="menuEditorList" class="space-y-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Micro-Toast Container -->
+  <div id="toastHost" class="fixed bottom-28 left-1/2 z-50 pointer-events-none"></div>
+
+  <!-- =========================================================
+       APPLICATION LOGIC
+  ========================================================== -->
+  <script>
+    const STORAGE_KEYS = {
+      config: 'densire_hbd_config_v4',
+      menu: 'densire_hbd_menu_v4',
+      cart: 'densire_hbd_cart_v4',
+      customer: 'densire_hbd_customer_v4'
+    };
+
+    const DEFAULT_CONFIG = {
+      storeName: 'DENSIRE HAROONABAD',
+      whatsappNumber: '923032253333',
+      deliveryFee: 80,
+      freeDeliveryMin: 500,
+      sheetCsvUrl: ''
+    };
+
+    const CATEGORIES = [
+      {
+        id: 'Den-Deals',
+        title: 'Den-Deals',
+        subtitle: 'Combo Value Boxes & Family Feasts',
+        fallbackKey: 'deal',
+        coverImg: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'Den-Burgers',
+        title: 'Den-Burgers',
+        subtitle: 'Crispy Zinger & Signature Crunch',
+        fallbackKey: 'burger',
+        coverImg: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'Grill Burgers',
+        title: 'Grill Burgers',
+        subtitle: 'Smoky Flame-Grilled Patties',
+        fallbackKey: 'grill',
+        coverImg: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'Den-Pizza',
+        title: 'Den-Pizza',
+        subtitle: 'Cheesy Oven-Baked • S / M / L',
+        fallbackKey: 'pizza',
+        coverImg: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'Den-Rolls',
+        title: 'Den-Rolls',
+        subtitle: 'Crispy Paratha & Garlic Shawarma',
+        fallbackKey: 'roll',
+        coverImg: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'Den-Snacks',
+        title: 'Den-Snacks',
+        subtitle: 'Golden Fries, Hot Wings & Nuggets',
+        fallbackKey: 'snack',
+        coverImg: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'Drinks & Desserts',
+        title: 'Drinks & Desserts',
+        subtitle: 'Chilled Soft Drinks & Fudge Brownie',
+        fallbackKey: 'drink',
+        coverImg: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=700&q=80'
+      }
+    ];
+
+    const DEFAULT_MENU_ITEMS = [
+      // Den-Deals (20 Authentic Deals)
+      { id: 101, category: 'Den-Deals', name: 'Deal D-1 (Zinger Combo)', price: 550, badge: 'Popular', desc: '1 Crispy Zinger Burger + 1 Regular Fries + 1 Regular Drink', image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 102, category: 'Den-Deals', name: 'Deal D-2 (Twin Zinger)', price: 990, badge: 'Best Value', desc: '2 Crispy Zinger Burgers + 1 Regular Fries + 2 Regular Drinks', image: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 103, category: 'Den-Deals', name: 'Deal D-3 (Pizza & Zinger)', price: 950, desc: '1 Small Pizza + 1 Zinger Burger + 1 Regular Drink', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 104, category: 'Den-Deals', name: 'Deal D-4 (Medium Feast)', price: 1350, desc: '1 Medium Pizza + 1 Large Fries + 1 Liter Drink', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 105, category: 'Den-Deals', name: 'Deal D-5 (Large Pizza + Wings)', price: 1790, badge: 'Hot', desc: '1 Large Pizza + 5 Peri-Peri Hot Wings + 1.5 Liter Drink', image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 106, category: 'Den-Deals', name: 'Deal D-6 (Shawarma Duo)', price: 680, desc: '2 Mayo Garlic Chicken Shawarmas + 1 Regular Fries + 2 Drinks', image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 107, category: 'Den-Deals', name: 'Deal D-7 (Mighty Box)', price: 690, desc: '1 Double Mighty Zinger Burger + 1 Regular Fries + 1 Regular Drink', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 108, category: 'Den-Deals', name: 'Deal D-8 (Grill Duo)', price: 1050, desc: '2 Smoky Chicken Grill Burgers + 1 Regular Fries + 2 Regular Drinks', image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 109, category: 'Den-Deals', name: 'Deal D-9 (Roll & Shawarma)', price: 590, desc: '1 Zinger Paratha Roll + 1 Chicken Shawarma + 1 Regular Drink', image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 110, category: 'Den-Deals', name: 'Deal D-10 (Crown Crust Combo)', price: 1690, badge: 'Chef Special', desc: '1 Medium Crown Crust Pizza + 1 Zinger Burger + 1.5 Liter Drink', image: 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 111, category: 'Den-Deals', name: 'Deal D-11 (Triple Zinger)', price: 1450, desc: '3 Zinger Burgers + 1 Large Fries + 1.5 Liter Drink', image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 112, category: 'Den-Deals', name: 'Deal D-12 (Twin Small Pizza)', price: 1290, desc: '2 Small Pizzas (Any Flavor) + 1 Regular Fries + 1 Liter Drink', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 113, category: 'Den-Deals', name: 'Deal D-13 (Wings & Loaded Fries)', price: 980, desc: '10 Crispy Hot Wings + 1 Loaded Cheese Fries + 1 Liter Drink', image: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 114, category: 'Den-Deals', name: 'Deal D-14 (Paratha Roll Pair)', price: 790, desc: '2 Crispy Zinger Paratha Rolls + 1 Regular Fries + 2 Drinks', image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 115, category: 'Den-Deals', name: 'Deal D-15 (Large Special + Zinger)', price: 1990, desc: '1 Large Special Pizza + 1 Zinger Burger + 1.5 Liter Drink', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 116, category: 'Den-Deals', name: 'Deal D-16 (Squad 4 Zingers)', price: 1850, desc: '4 Zinger Burgers + 1 Large Fries + 1.5 Liter Drink', image: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 117, category: 'Den-Deals', name: 'Deal D-17 (Double Medium Pizza)', price: 2150, desc: '2 Medium Pizzas (Tikka / Fajita) + 1.5 Liter Drink', image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 118, category: 'Den-Deals', name: 'Deal D-18 (Family Feast Box)', price: 2490, badge: 'Family Pack', desc: '1 Large Pizza + 2 Zinger Burgers + 1 Large Fries + 1.5 Liter Drink', image: 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 119, category: 'Den-Deals', name: 'Deal D-19 (Mega Gathering)', price: 3190, desc: '2 Large Pizzas + 10 Hot Wings + 1.5 Liter Drink', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 120, category: 'Den-Deals', name: 'Deal D-20 (Student Crunch)', price: 450, desc: '1 Den Crunch Burger + 1 Regular Fries + 1 Regular Drink', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=640&q=80', available: true },
+
+      // Den-Burgers (4 Items)
+      { id: 201, category: 'Den-Burgers', name: 'Den Crunch Burger', price: 290, desc: 'Crispy golden chicken patty, iceberg lettuce, and signature garlic mayo in a toasted bun.', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 202, category: 'Den-Burgers', name: 'Classic Zinger Burger', price: 380, badge: 'Bestseller', desc: 'Whole crispy spicy chicken thigh fillet, fresh lettuce, and creamy house sauce.', image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 203, category: 'Den-Burgers', name: 'Mighty Double Zinger', price: 540, badge: 'Heavyweight', desc: 'Double crispy zinger fillets, melted cheddar slice, spicy mayo, and toasted sesame bun.', image: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 204, category: 'Den-Burgers', name: 'Jalapeno Cheese Zinger', price: 440, desc: 'Crunchy zinger fillet topped with warm cheese sauce, pickled jalapenos, and smoky sauce.', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=640&q=80', available: true },
+
+      // Grill Burgers (2 Items)
+      { id: 301, category: 'Grill Burgers', name: 'Smoky Chicken Grill Burger', price: 420, badge: 'Flame Grilled', desc: 'Herb-marinated chargrilled chicken breast fillet, caramelized onions, cheese, and smoky BBQ glaze.', image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 302, category: 'Grill Burgers', name: 'Double Chargrilled Stack', price: 580, desc: 'Two juicy flame-grilled patties layered with double cheddar cheese, pickles, and signature grill sauce.', image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=640&q=80', available: true },
+
+      // Den-Pizza (3 Items with S / M / L sizes)
+      { id: 401, category: 'Den-Pizza', name: 'Chicken Tikka Pizza', price: 550, sizes: { S: 550, M: 990, L: 1450 }, desc: 'Desi spiced chicken tikka chunks, onions, mozzarella cheese, and house pizza sauce.', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 402, category: 'Den-Pizza', name: 'Chicken Fajita Pizza', price: 550, sizes: { S: 550, M: 990, L: 1450 }, badge: 'Popular', desc: 'Marinated fajita chicken, capsicum, onions, olives, and stretchy mozzarella.', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 403, category: 'Den-Pizza', name: 'DENSIRE Crown Crust Special', price: 690, sizes: { S: 690, M: 1190, L: 1690 }, badge: 'Signature', desc: 'Loaded with seekh kabab stuffed crown pockets, spicy chicken, mushrooms, olives, and extra cheese.', image: 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=640&q=80', available: true },
+
+      // Den-Rolls (2 Items)
+      { id: 501, category: 'Den-Rolls', name: 'Crispy Zinger Paratha Roll', price: 320, badge: 'Crispy', desc: 'Flaky golden paratha wrapped around crunchy zinger strips, garlic mayo, and fresh salad.', image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 502, category: 'Den-Rolls', name: 'Creamy Mayo Garlic Shawarma', price: 260, desc: 'Tender roasted chicken chunks, pickled veggies, and rich garlic tahini wrapped in warm pita.', image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=640&q=80', available: true },
+
+      // Den-Snacks (2 Items)
+      { id: 601, category: 'Den-Snacks', name: 'Crispy Golden Masala Fries', price: 180, sizes: { S: 180, L: 300 }, desc: 'Hot crinkle & straight-cut fries seasoned with chatpata masala and served with garlic dip.', image: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 602, category: 'Den-Snacks', name: 'Peri-Peri Hot Wings (6 Pcs)', price: 390, badge: 'Spicy', desc: 'Crispy fried chicken wings tossed in tangy peri-peri glaze with house dip.', image: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&w=640&q=80', available: true },
+
+      // Drinks & Desserts (2 Items)
+      { id: 701, category: 'Drinks & Desserts', name: 'Chilled Soft Drink', price: 120, sizes: { '345ml': 120, '1.5L': 220 }, desc: 'Ice-cold Pepsi, 7UP, or Mirinda served chilled.', image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=640&q=80', available: true },
+      { id: 702, category: 'Drinks & Desserts', name: 'Warm Chocolate Fudge Brownie', price: 290, desc: 'Rich dark chocolate brownie drizzled with warm fudge sauce.', image: 'https://images.unsplash.com/photo-1564355808539-22fda35bed7e?auto=format&fit=crop&w=640&q=80', available: true }
+    ];
+
+    const CUSTOM_EXTRAS = {
+      'Den-Pizza': [
+        { id: 'crust_cheese', name: 'Cheese Stuffed Crust', price: 200 },
+        { id: 'crust_kabab', name: 'Kabab Stuffed Crust', price: 220 },
+        { id: 'extra_mozz', name: 'Extra Mozzarella Topping', price: 150 },
+        { id: 'dip_garlic', name: 'Signature Garlic Mayo Dip', price: 50 }
+      ],
+      'Den-Burgers': [
+        { id: 'extra_cheese', name: 'Extra Cheddar Cheese Slice', price: 70 },
+        { id: 'extra_fillet', name: 'Extra Crispy Zinger Fillet', price: 160 },
+        { id: 'extra_jalapeno', name: 'Extra Jalapenos & Sauce', price: 50 },
+        { id: 'dip_garlic', name: 'Signature Garlic Mayo Dip', price: 50 }
+      ],
+      'Grill Burgers': [
+        { id: 'extra_cheese', name: 'Extra Cheddar Cheese Slice', price: 70 },
+        { id: 'extra_grill', name: 'Extra Chargrilled Patty', price: 180 },
+        { id: 'dip_garlic', name: 'Signature Garlic Mayo Dip', price: 50 }
+      ],
+      'Den-Rolls': [
+        { id: 'extra_cheese', name: 'Melted Cheese Filling', price: 70 },
+        { id: 'extra_chicken', name: 'Extra Chicken Filling', price: 100 },
+        { id: 'dip_garlic', name: 'Signature Garlic Mayo Dip', price: 50 }
+      ]
+    };
+
+    const UPSELL_ITEMS = [
+      { id: 901, name: 'Garlic Mayo Dip', price: 50, category: 'Den-Snacks', image: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=300&q=80' },
+      { id: 902, name: 'Chilled Soft Drink (345ml)', price: 120, category: 'Drinks & Desserts', image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=300&q=80' },
+      { id: 903, name: 'Crispy Fries (Regular)', price: 180, category: 'Den-Snacks', image: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=300&q=80' },
+      { id: 904, name: 'Chocolate Fudge Brownie', price: 290, category: 'Drinks & Desserts', image: 'https://images.unsplash.com/photo-1564355808539-22fda35bed7e?auto=format&fit=crop&w=300&q=80' }
+    ];
+
+    const HAROONABAD_AREAS = [
+      'Housing Colony',
+      'Baldia Road',
+      'Main Bazaar',
+      'Tiba Noorpura',
+      'Canal View',
+      'Railway Road',
+      'Model Town',
+      'Dunga Bunga Road'
+    ];
+
+    // Global State
+    let config = loadConfig();
+    let menuItems = loadMenuItems();
+    let cart = loadSavedCart(); // { key: { key, id, name, category, unitPrice, qty, size, extras } }
+    let selectedItemSizes = {};
+    let activeCategory = null; // null => Step 1 Categories Home; string => Step 2 Category Items
+    let searchQuery = '';
+    let orderType = 'delivery';
+    let paymentMethod = 'Cash';
+    let customizerState = { item: null, size: null, selectedExtraIds: [] };
+
+    /* =========================================================
+       STORAGE HELPERS
+    ========================================================= */
+    function loadConfig() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.config);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            return { ...DEFAULT_CONFIG, ...parsed };
+          }
+        }
+      } catch (e) {
+        console.warn('Config load skipped:', e);
+      }
+      return { ...DEFAULT_CONFIG };
+    }
+
+    function saveConfig() {
+      try {
+        localStorage.setItem(STORAGE_KEYS.config, JSON.stringify(config));
+      } catch (e) {
+        console.warn('Config save skipped:', e);
+      }
+    }
+
+    function loadMenuItems() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.menu);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Menu load skipped:', e);
+      }
+      return JSON.parse(JSON.stringify(DEFAULT_MENU_ITEMS));
+    }
+
+    function saveMenuItems() {
+      try {
+        localStorage.setItem(STORAGE_KEYS.menu, JSON.stringify(menuItems));
+      } catch (e) {
+        console.warn('Menu save skipped:', e);
+      }
+    }
+
+    function loadSavedCart() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.cart);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            return parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Cart load skipped:', e);
+      }
+      return {};
+    }
+
+    function saveCartToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(cart));
+      } catch (e) {
+        console.warn('Cart save skipped:', e);
+      }
+    }
+
+    function loadSavedCustomerProfile() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.customer);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (!data || typeof data !== 'object') return;
+
+        const nameEl = document.getElementById('custNameInput');
+        const phoneEl = document.getElementById('custPhoneInput');
+        const addrEl = document.getElementById('custAddressInput');
+        const banner = document.getElementById('savedProfileBanner');
+
+        if (data.name && nameEl) nameEl.value = data.name;
+        if (data.phone && phoneEl) phoneEl.value = data.phone;
+        if (data.address && addrEl) addrEl.value = data.address;
+        if (data.payment) setPaymentMethod(data.payment, true);
+
+        if ((data.name || data.phone || data.address) && banner) {
+          banner.classList.remove('hidden');
+          banner.classList.add('flex');
+        }
+      } catch (e) {
+        console.warn('Customer profile load skipped:', e);
+      }
+    }
+
+    function saveCustomerProfile() {
+      try {
+        const payload = {
+          name: (document.getElementById('custNameInput')?.value || '').trim(),
+          phone: (document.getElementById('custPhoneInput')?.value || '').trim(),
+          address: (document.getElementById('custAddressInput')?.value || '').trim(),
+          payment: paymentMethod
+        };
+        localStorage.setItem(STORAGE_KEYS.customer, JSON.stringify(payload));
+      } catch (e) {
+        console.warn('Customer profile save skipped:', e);
+      }
+    }
+
+    function clearSavedCustomerProfile() {
+      try {
+        localStorage.removeItem(STORAGE_KEYS.customer);
+      } catch (e) {}
+      document.getElementById('custNameInput').value = '';
+      document.getElementById('custPhoneInput').value = '';
+      document.getElementById('custAddressInput').value = '';
+      const banner = document.getElementById('savedProfileBanner');
+      banner.classList.add('hidden');
+      banner.classList.remove('flex');
+      updateReceiptPreview();
+      showMicroToast('Saved address cleared');
+    }
+
+    function initDefaultSizes() {
+      menuItems.forEach((item) => {
+        if (item.sizes && !selectedItemSizes[item.id]) {
+          const keys = Object.keys(item.sizes);
+          if (keys.length > 0) selectedItemSizes[item.id] = keys[0];
+        }
+      });
+    }
+
+    /* =========================================================
+       NAVIGATION: STEP 1 (CATEGORIES) <-> STEP 2 (ITEMS)
+    ========================================================= */
+    function getCategoryMeta(catId) {
+      return CATEGORIES.find((c) => c.id === catId) || {
+        id: catId,
+        title: catId,
+        subtitle: 'Freshly prepared to order',
+        fallbackKey: 'burger',
+        coverImg: CATEGORIES[0].coverImg
+      };
+    }
+
+    function getFallbackKeyForCategory(catId) {
+      return getCategoryMeta(catId).fallbackKey || 'burger';
+    }
+
+    function renderCategoryGrid() {
+      const grid = document.getElementById('categoryGrid');
+      const totalBadge = document.getElementById('totalMenuCountBadge');
+      if (totalBadge) totalBadge.textContent = `${menuItems.length} Items`;
+
+      grid.innerHTML = CATEGORIES.map((cat, idx) => {
+        const itemsInCat = menuItems.filter((i) => i.category === cat.id);
+        const minPrice = itemsInCat.length
+          ? Math.min(...itemsInCat.map((i) => Number(i.price) || 0))
+          : 0;
+        const delay = Math.min(idx * 45, 320);
+
+        return `
+          <button
+            type="button"
+            onclick="openCategory('${escapeHtml(cat.id)}')"
+            style="animation-delay: ${delay}ms"
+            class="animate-card-reveal group text-left rounded-2xl bg-surface hover:bg-elevated border border-white/[0.08] hover:border-brand/50 overflow-hidden shadow-lg shadow-black/40 active:scale-[0.98] transition-all flex flex-col"
+          >
+            <div class="relative w-full aspect-[16/10] img-shimmer-track overflow-hidden bg-obsidian">
+              <img
+                src="${escapeHtml(cat.coverImg)}"
+                alt="${escapeHtml(cat.title)}"
+                loading="lazy"
+                onload="window.handleImgLoad(this)"
+                onerror="window.handleImgError(this, '${cat.fallbackKey}')"
+                class="food-photo w-full h-full object-cover"
+              />
+              <div class="svg-fallback-box hidden absolute inset-0 flex items-center justify-center bg-obsidian/90"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent"></div>
+              <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-lg bg-obsidian/85 backdrop-blur-md border border-white/10 font-mono font-bold text-[10px] text-zinc-200 tabular-nums">
+                ${itemsInCat.length} ${itemsInCat.length === 1 ? 'Item' : 'Items'}
+              </span>
+            </div>
+
+            <div class="p-3 sm:p-3.5 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 class="text-sm sm:text-base font-extrabold text-white group-hover:text-brand transition-colors leading-tight">
+                  ${escapeHtml(cat.title)}
+                </h3>
+                <p class="text-[11px] text-zinc-400 mt-0.5 line-clamp-1">${escapeHtml(cat.subtitle)}</p>
+              </div>
+
+              <div class="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between">
+                <span class="font-mono font-bold text-[11px] text-brand tabular-nums">
+                  ${minPrice > 0 ? `From Rs. ${minPrice.toLocaleString()}` : 'Explore'}
+                </span>
+                <span class="w-6 h-6 rounded-lg bg-obsidian group-hover:bg-brand text-zinc-300 group-hover:text-obsidian flex items-center justify-center transition-colors">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function openCategory(catId, skipHash) {
+      activeCategory = catId;
+      searchQuery = '';
+      const searchEl = document.getElementById('searchInput');
+      if (searchEl) searchEl.value = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+
+      if (!skipHash) {
+        try {
+          history.pushState({ category: catId }, '', `#cat-${encodeURIComponent(catId)}`);
+        } catch (e) {}
+      }
+
+      showCategoryItemsView();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goHomeCategories(skipHash) {
+      activeCategory = null;
+      searchQuery = '';
+      const searchEl = document.getElementById('searchInput');
+      if (searchEl) searchEl.value = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+
+      if (!skipHash && window.location.hash) {
+        try {
+          history.pushState({}, '', window.location.pathname + window.location.search);
+        } catch (e) {}
+      }
+
+      document.getElementById('categoryItemsView').classList.add('hidden');
+      const homeView = document.getElementById('categoriesHomeView');
+      homeView.classList.remove('hidden');
+      homeView.classList.remove('animate-view-in');
+      void homeView.offsetWidth;
+      homeView.classList.add('animate-view-in');
+      renderCategoryGrid();
+    }
+
+    function showCategoryItemsView() {
+      document.getElementById('categoriesHomeView').classList.add('hidden');
+      const itemsView = document.getElementById('categoryItemsView');
+      itemsView.classList.remove('hidden');
+      itemsView.classList.remove('animate-view-in');
+      void itemsView.offsetWidth;
+      itemsView.classList.add('animate-view-in');
+
+      renderQuickPills();
+      renderMenuItems();
+    }
+
+    function renderQuickPills() {
+      const strip = document.getElementById('categoryPillsStrip');
+      const gliderHtml = '<div id="pillActiveGlider" class="absolute top-0.5 bottom-0.5 left-0 rounded-xl bg-brand pointer-events-none z-0"></div>';
+
+      const pillsHtml = CATEGORIES.map((cat) => {
+        const isActive = !searchQuery && activeCategory === cat.id;
+        return `
+          <button
+            type="button"
+            data-cat-pill="${escapeHtml(cat.id)}"
+            onclick="openCategory('${escapeHtml(cat.id)}')"
+            class="relative z-10 px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-colors ${
+              isActive ? 'text-obsidian' : 'text-zinc-400 hover:text-white'
+            }"
+          >
+            ${escapeHtml(cat.title)}
+          </button>
+        `;
+      }).join('');
+
+      strip.innerHTML = gliderHtml + pillsHtml;
+      requestAnimationFrame(positionActivePillGlider);
+    }
+
+    function positionActivePillGlider() {
+      const strip = document.getElementById('categoryPillsStrip');
+      const glider = document.getElementById('pillActiveGlider');
+      if (!strip || !glider) return;
+
+      if (searchQuery || !activeCategory) {
+        glider.style.opacity = '0';
+        return;
+      }
+
+      const activeBtn = strip.querySelector(`[data-cat-pill="${CSS.escape(activeCategory)}"]`);
+      if (!activeBtn) {
+        glider.style.opacity = '0';
+        return;
+      }
+
+      glider.style.opacity = '1';
+      glider.style.width = `${activeBtn.offsetWidth}px`;
+      glider.style.transform = `translate3d(${activeBtn.offsetLeft}px, 0, 0)`;
+
+      // Keep active pill visible in horizontal scroll strip
+      const targetScroll = activeBtn.offsetLeft - strip.clientWidth / 2 + activeBtn.offsetWidth / 2;
+      strip.scrollTo({ left: Math.max(0, targetScroll), behavior: 'smooth' });
+    }
+
+    function handleSearchInput(val) {
+      searchQuery = val.trim();
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (searchQuery) {
+        clearBtn.classList.remove('hidden');
+        showCategoryItemsView();
+      } else {
+        clearBtn.classList.add('hidden');
+        if (activeCategory) {
+          showCategoryItemsView();
+        } else {
+          goHomeCategories(true);
+        }
+      }
+    }
+
+    function clearSearch() {
+      searchQuery = '';
+      const searchEl = document.getElementById('searchInput');
+      if (searchEl) searchEl.value = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+      if (activeCategory) {
+        showCategoryItemsView();
+      } else {
+        goHomeCategories(true);
+      }
+    }
+
+    /* =========================================================
+       MENU ITEMS RENDERING & SIZE / CUSTOMIZER ACTIONS
+    ========================================================= */
+    function getItemDisplayPrice(item) {
+      if (item.sizes) {
+        const sizeKey = selectedItemSizes[item.id] || Object.keys(item.sizes)[0];
+        return Number(item.sizes[sizeKey]) || Number(item.price) || 0;
+      }
+      return Number(item.price) || 0;
+    }
+
+    function getCartQtyForStandardItem(item) {
+      const sizeKey = item.sizes ? (selectedItemSizes[item.id] || Object.keys(item.sizes)[0]) : '';
+      const key = `${item.id}_${sizeKey}_std`;
+      return cart[key] ? cart[key].qty : 0;
+    }
+
+    function renderMenuItems() {
+      const grid = document.getElementById('menuItemsGrid');
+      const emptyState = document.getElementById('emptySearchState');
+      const titleEl = document.getElementById('activeCategoryTitle');
+      const subEl = document.getElementById('activeCategorySubtitle');
+      const countEl = document.getElementById('activeCategoryCount');
+
+      let filtered = [];
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        filtered = menuItems.filter(
+          (item) =>
+            item.name.toLowerCase().includes(q) ||
+            item.desc.toLowerCase().includes(q) ||
+            item.category.toLowerCase().includes(q)
+        );
+        titleEl.textContent = `Search: "${searchQuery}"`;
+        subEl.textContent = 'Matching items across all categories';
+      } else {
+        const meta = getCategoryMeta(activeCategory);
+        filtered = menuItems.filter((item) => item.category === activeCategory);
+        titleEl.textContent = meta.title;
+        subEl.textContent = meta.subtitle;
+      }
+
+      countEl.textContent = `${filtered.length} ${filtered.length === 1 ? 'item' : 'items'}`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      grid.innerHTML = filtered
+        .map((item, idx) => {
+          const displayPrice = getItemDisplayPrice(item);
+          const qty = getCartQtyForStandardItem(item);
+          const fallbackKey = getFallbackKeyForCategory(item.category);
+          const hasExtras = Boolean(CUSTOM_EXTRAS[item.category]);
+          const delay = Math.min(idx * 35, 280);
+          const isAvailable = item.available !== false;
+
+          // Size pills if applicable
+          let sizePillsHtml = '';
+          if (item.sizes) {
+            const activeSize = selectedItemSizes[item.id] || Object.keys(item.sizes)[0];
+            sizePillsHtml = `
+              <div class="flex items-center gap-1.5 mt-2">
+                ${Object.keys(item.sizes)
+                  .map((sz) => {
+                    const selected = sz === activeSize;
+                    return `
+                      <button
+                        type="button"
+                        onclick="selectItemSize(${item.id}, '${escapeHtml(sz)}')"
+                        class="px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold transition-all ${
+                          selected
+                            ? 'bg-brand text-obsidian shadow-sm'
+                            : 'bg-obsidian text-zinc-400 border border-white/[0.08] hover:text-white'
+                        }"
+                      >
+                        ${escapeHtml(sz)}
+                      </button>
+                    `;
+                  })
+                  .join('')}
+              </div>
+            `;
+          }
+
+          // Action control: + Add vs - qty +
+          let actionHtml = '';
+          if (!isAvailable) {
+            actionHtml = `<span class="px-3 py-1.5 rounded-xl bg-zinc-800/80 text-zinc-500 text-xs font-bold">Out of Stock</span>`;
+          } else if (qty > 0) {
+            actionHtml = `
+              <div class="inline-flex items-center gap-2 bg-obsidian border border-brand/50 rounded-xl p-1">
+                <button type="button" onclick="decrementStandardItem(${item.id})" class="w-7 h-7 rounded-lg bg-elevated hover:bg-zinc-700 text-white font-bold text-sm flex items-center justify-center active:scale-90 transition-transform">&minus;</button>
+                <span class="font-mono font-extrabold text-xs text-brand w-5 text-center tabular-nums">${qty}</span>
+                <button type="button" onclick="incrementStandardItem(${item.id})" class="w-7 h-7 rounded-lg bg-brand text-obsidian font-extrabold text-sm flex items-center justify-center active:scale-90 transition-transform">+</button>
+              </div>
+            `;
+          } else {
+            actionHtml = `
+              <button
+                type="button"
+                onclick="incrementStandardItem(${item.id})"
+                class="px-3.5 py-2 rounded-xl bg-brand hover:bg-brandHover text-obsidian font-extrabold text-xs active:scale-95 transition-all shadow-md shadow-brand/10"
+              >
+                + Add
+              </button>
+            `;
+          }
+
+          return `
+            <article
+              style="animation-delay: ${delay}ms"
+              class="animate-card-reveal group rounded-2xl bg-surface border border-white/[0.08] hover:border-white/[0.16] p-3 flex gap-3.5 transition-colors ${
+                !isAvailable ? 'opacity-60' : ''
+              }"
+            >
+              <!-- Item Photo -->
+              <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl img-shimmer-track overflow-hidden bg-obsidian shrink-0">
+                <img
+                  src="${escapeHtml(item.image)}"
+                  alt="${escapeHtml(item.name)}"
+                  loading="lazy"
+                  onload="window.handleImgLoad(this)"
+                  onerror="window.handleImgError(this, '${fallbackKey}')"
+                  class="food-photo w-full h-full object-cover"
+                />
+                <div class="svg-fallback-box hidden absolute inset-0 flex items-center justify-center bg-obsidian"></div>
+                ${
+                  item.badge
+                    ? `<span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-obsidian/90 border border-brand/40 text-brand font-bold text-[9px] uppercase tracking-wider">${escapeHtml(item.badge)}</span>`
+                    : ''
+                }
+              </div>
+
+              <!-- Item Content -->
+              <div class="flex-1 min-w-0 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-start justify-between gap-2">
+                    <h3 class="text-sm font-extrabold text-white leading-snug">${escapeHtml(item.name)}</h3>
+                  </div>
+                  <p class="text-[11px] text-zinc-400 mt-1 line-clamp-2 leading-relaxed">${escapeHtml(item.desc)}</p>
+                  ${sizePillsHtml}
+                </div>
+
+                <div class="mt-2.5 pt-2 border-t border-white/[0.06] flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <div class="font-mono font-extrabold text-sm text-brand tabular-nums">Rs. ${displayPrice.toLocaleString()}</div>
+                    ${
+                      hasExtras && isAvailable
+                        ? `<button type="button" onclick="openCustomizer(${item.id})" class="text-[10px] font-bold text-zinc-400 hover:text-brand underline underline-offset-2 mt-0.5">
+                            ${item.category === 'Den-Pizza' ? '+ Crust & Extras' : '+ Add Extras'}
+                          </button>`
+                        : ''
+                    }
+                  </div>
+                  ${actionHtml}
+                </div>
+              </div>
+            </article>
+          `;
+        })
+        .join('');
+    }
+
+    function selectItemSize(itemId, sizeKey) {
+      selectedItemSizes[itemId] = sizeKey;
+      renderMenuItems();
+    }
+
+    function incrementStandardItem(itemId) {
+      const item = menuItems.find((i) => i.id === itemId);
+      if (!item || item.available === false) return;
+
+      const sizeKey = item.sizes ? (selectedItemSizes[item.id] || Object.keys(item.sizes)[0]) : '';
+      const unitPrice = getItemDisplayPrice(item);
+      const key = `${item.id}_${sizeKey}_std`;
+
+      if (cart[key]) {
+        cart[key].qty += 1;
+      } else {
+        cart[key] = {
+          key,
+          id: item.id,
+          name: item.name,
+          category: item.category,
+          unitPrice,
+          qty: 1,
+          size: sizeKey || null,
+          extras: []
+        };
+      }
+
+      saveCartToStorage();
+      updateCartUI(true);
+      if (activeCategory || searchQuery) renderMenuItems();
+      showMicroToast(`+1 ${item.name}${sizeKey ? ` (${sizeKey})` : ''}`);
+    }
+
+    function decrementStandardItem(itemId) {
+      const item = menuItems.find((i) => i.id === itemId);
+      if (!item) return;
+      const sizeKey = item.sizes ? (selectedItemSizes[item.id] || Object.keys(item.sizes)[0]) : '';
+      const key = `${item.id}_${sizeKey}_std`;
+      if (!cart[key]) return;
+
+      cart[key].qty -= 1;
+      if (cart[key].qty <= 0) delete cart[key];
+
+      saveCartToStorage();
+      updateCartUI(false);
+      if (activeCategory || searchQuery) renderMenuItems();
+    }
+
+    /* =========================================================
+       ITEM CUSTOMIZER (PIZZA CRUST & BURGER/ROLL EXTRAS)
+    ========================================================= */
+    function openCustomizer(itemId) {
+      const item = menuItems.find((i) => i.id === itemId);
+      if (!item) return;
+
+      const defaultSize = item.sizes ? (selectedItemSizes[item.id] || Object.keys(item.sizes)[0]) : null;
+      customizerState = {
+        item,
+        size: defaultSize,
+        selectedExtraIds: []
+      };
+
+      document.getElementById('custItemName').textContent = item.name;
+      renderCustomizerBody();
+      document.getElementById('customizerBackdrop').classList.add('is-open');
+    }
+
+    function closeCustomizer() {
+      document.getElementById('customizerBackdrop').classList.remove('is-open');
+    }
+
+    function closeCustomizerOnBackdrop(e) {
+      if (e.target.id === 'customizerBackdrop') closeCustomizer();
+    }
+
+    function renderCustomizerBody() {
+      const { item, size, selectedExtraIds } = customizerState;
+      const sizeSection = document.getElementById('custSizeSection');
+      const sizeOptions = document.getElementById('custSizeOptions');
+
+      if (item.sizes) {
+        sizeSection.classList.remove('hidden');
+        sizeOptions.innerHTML = Object.entries(item.sizes)
+          .map(([sz, pr]) => {
+            const active = sz === size;
+            return `
+              <button
+                type="button"
+                onclick="setCustomizerSize('${escapeHtml(sz)}')"
+                class="p-2.5 rounded-xl border text-center transition-all ${
+                  active
+                    ? 'bg-brand/15 border-brand text-brand font-extrabold'
+                    : 'bg-obsidian border-white/[0.09] text-zinc-400 font-semibold'
+                }"
+              >
+                <div class="text-xs font-mono">${escapeHtml(sz)}</div>
+                <div class="text-[11px] font-mono mt-0.5">Rs. ${Number(pr).toLocaleString()}</div>
+              </button>
+            `;
+          })
+          .join('');
+      } else {
+        sizeSection.classList.add('hidden');
+      }
+
+      const extras = CUSTOM_EXTRAS[item.category] || [];
+      const extrasList = document.getElementById('custExtrasList');
+      extrasList.innerHTML = extras
+        .map((ext) => {
+          const checked = selectedExtraIds.includes(ext.id);
+          return `
+            <button
+              type="button"
+              onclick="toggleCustomizerExtra('${ext.id}')"
+              class="w-full p-3 rounded-xl border flex items-center justify-between text-left transition-all ${
+                checked
+                  ? 'bg-brand/15 border-brand text-white'
+                  : 'bg-obsidian border-white/[0.08] text-zinc-300 hover:border-white/20'
+              }"
+            >
+              <div class="flex items-center gap-2.5">
+                <span class="w-4 h-4 rounded flex items-center justify-center border ${
+                  checked ? 'bg-brand border-brand text-obsidian font-extrabold' : 'border-zinc-600'
+                }">
+                  ${checked ? '✓' : ''}
+                </span>
+                <span class="text-xs font-semibold">${escapeHtml(ext.name)}</span>
+              </div>
+              <span class="font-mono text-xs font-bold text-brand">+Rs. ${ext.price}</span>
+            </button>
+          `;
+        })
+        .join('');
+
+      updateCustomizerPrice();
+    }
+
+    function setCustomizerSize(sz) {
+      customizerState.size = sz;
+      selectedItemSizes[customizerState.item.id] = sz;
+      renderCustomizerBody();
+    }
+
+    function toggleCustomizerExtra(extraId) {
+      const idx = customizerState.selectedExtraIds.indexOf(extraId);
+      if (idx >= 0) {
+        customizerState.selectedExtraIds.splice(idx, 1);
+      } else {
+        customizerState.selectedExtraIds.push(extraId);
+      }
+      renderCustomizerBody();
+    }
+
+    function updateCustomizerPrice() {
+      const { item, size, selectedExtraIds } = customizerState;
+      const base = item.sizes ? Number(item.sizes[size]) : Number(item.price);
+      const extrasPool = CUSTOM_EXTRAS[item.category] || [];
+      const extrasTotal = selectedExtraIds.reduce((sum, id) => {
+        const found = extrasPool.find((e) => e.id === id);
+        return sum + (found ? found.price : 0);
+      }, 0);
+      document.getElementById('custTotalPrice').textContent = `Rs. ${(base + extrasTotal).toLocaleString()}`;
+    }
+
+    function confirmCustomItem() {
+      const { item, size, selectedExtraIds } = customizerState;
+      if (!item) return;
+
+      const base = item.sizes ? Number(item.sizes[size]) : Number(item.price);
+      const extrasPool = CUSTOM_EXTRAS[item.category] || [];
+      const chosenExtras = selectedExtraIds
+        .map((id) => extrasPool.find((e) => e.id === id))
+        .filter(Boolean);
+      const extrasTotal = chosenExtras.reduce((s, e) => s + e.price, 0);
+      const unitPrice = base + extrasTotal;
+
+      const extraSig = chosenExtras.map((e) => e.id).sort().join('+') || 'std';
+      const key = `${item.id}_${size || ''}_${extraSig}`;
+
+      if (cart[key]) {
+        cart[key].qty += 1;
+      } else {
+        cart[key] = {
+          key,
+          id: item.id,
+          name: item.name,
+          category: item.category,
+          unitPrice,
+          qty: 1,
+          size: size || null,
+          extras: chosenExtras.map((e) => e.name)
+        };
+      }
+
+      saveCartToStorage();
+      closeCustomizer();
+      updateCartUI(true);
+      if (activeCategory || searchQuery) renderMenuItems();
+      showMicroToast(`Added ${item.name}`);
+    }
+
+    /* =========================================================
+       CART CALCULATIONS, BAR & CHECKOUT SHEET
+    ========================================================= */
+    function getCartTotals() {
+      const entries = Object.values(cart);
+      const totalQty = entries.reduce((sum, item) => sum + item.qty, 0);
+      const subtotal = entries.reduce((sum, item) => sum + item.unitPrice * item.qty, 0);
+      const freeMin = Number(config.freeDeliveryMin) || 500;
+      const baseFee = Number(config.deliveryFee) || 80;
+      const isFreeDelivery = orderType === 'dinein' || subtotal >= freeMin;
+      const deliveryFee = isFreeDelivery ? 0 : baseFee;
+      const grandTotal = subtotal + deliveryFee;
+      const remainingForFree = Math.max(0, freeMin - subtotal);
+
+      return {
+        entries,
+        totalQty,
+        subtotal,
+        freeMin,
+        baseFee,
+        isFreeDelivery,
+        deliveryFee,
+        grandTotal,
+        remainingForFree
+      };
+    }
+
+    function updateCartUI(popAnimation) {
+      const totals = getCartTotals();
+      const bar = document.getElementById('stickyCartBar');
+      const card = document.getElementById('stickyCartCard');
+
+      if (totals.totalQty === 0) {
+        bar.classList.add('translate-y-full');
+        return;
+      }
+
+      bar.classList.remove('translate-y-full');
+      document.getElementById('barItemCount').textContent = totals.totalQty;
+      document.getElementById('barSubtotal').textContent = `Rs. ${totals.subtotal.toLocaleString()}`;
+
+      // Progress bar toward Rs. 500 Free Delivery
+      const pct = Math.min(100, Math.round((totals.subtotal / totals.freeMin) * 100));
+      document.getElementById('barDeliveryProgress').style.width = `${pct}%`;
+
+      if (totals.subtotal >= totals.freeMin) {
+        document.getElementById('barDeliveryStatusText').textContent = 'FREE Haroonabad Delivery Unlocked!';
+        document.getElementById('barDeliveryStatusText').className = 'font-bold text-wa';
+        document.getElementById('barDeliveryBadge').textContent = 'FREE';
+      } else {
+        document.getElementById('barDeliveryStatusText').textContent = `Add Rs. ${totals.remainingForFree.toLocaleString()} more for FREE delivery`;
+        document.getElementById('barDeliveryStatusText').className = 'font-semibold text-zinc-300';
+        document.getElementById('barDeliveryBadge').textContent = `Rs. ${totals.freeMin} Goal`;
+      }
+
+      if (popAnimation && card) {
+        card.classList.remove('animate-cart-pop');
+        void card.offsetWidth;
+        card.classList.add('animate-cart-pop');
+      }
+    }
+
+    function openCheckoutModal() {
+      if (Object.keys(cart).length === 0) return;
+      document.getElementById('checkoutErrorBox').classList.add('hidden');
+      renderCheckoutCart();
+      renderCheckoutUpsells();
+      updateReceiptPreview();
+      document.getElementById('checkoutBackdrop').classList.add('is-open');
+    }
+
+    function closeCheckoutModal() {
+      document.getElementById('checkoutBackdrop').classList.remove('is-open');
+    }
+
+    function closeCheckoutOnBackdrop(e) {
+      if (e.target.id === 'checkoutBackdrop') closeCheckoutModal();
+    }
+
+    function renderCheckoutCart() {
+      const list = document.getElementById('checkoutCartList');
+      const entries = Object.values(cart);
+
+      if (entries.length === 0) {
+        closeCheckoutModal();
+        return;
+      }
+
+      list.innerHTML = entries
+        .map((entry) => {
+          const lineTotal = entry.unitPrice * entry.qty;
+          const metaParts = [];
+          if (entry.size) metaParts.push(`Size: ${entry.size}`);
+          if (entry.extras && entry.extras.length) metaParts.push(entry.extras.join(', '));
+
+          return `
+            <div class="p-3 rounded-xl bg-obsidian border border-white/[0.07] flex items-center justify-between gap-3">
+              <div class="min-w-0">
+                <div class="text-xs font-extrabold text-white truncate">${escapeHtml(entry.name)}</div>
+                ${metaParts.length ? `<div class="text-[10px] text-brand mt-0.5">${escapeHtml(metaParts.join(' • '))}</div>` : ''}
+                <div class="font-mono text-[11px] text-zinc-400 mt-0.5 tabular-nums">Rs. ${lineTotal.toLocaleString()}</div>
+              </div>
+
+              <div class="inline-flex items-center gap-2 bg-surface border border-white/[0.09] rounded-xl p-1 shrink-0">
+                <button type="button" onclick="adjustCartEntry('${escapeHtml(entry.key)}', -1)" class="w-7 h-7 rounded-lg bg-elevated text-white font-bold text-sm flex items-center justify-center">&minus;</button>
+                <span class="font-mono font-extrabold text-xs text-brand w-5 text-center tabular-nums">${entry.qty}</span>
+                <button type="button" onclick="adjustCartEntry('${escapeHtml(entry.key)}', 1)" class="w-7 h-7 rounded-lg bg-brand text-obsidian font-extrabold text-sm flex items-center justify-center">+</button>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function adjustCartEntry(key, delta) {
+      if (!cart[key]) return;
+      cart[key].qty += delta;
+      if (cart[key].qty <= 0) delete cart[key];
+
+      saveCartToStorage();
+      updateCartUI(false);
+      if (activeCategory || searchQuery) renderMenuItems();
+
+      if (Object.keys(cart).length === 0) {
+        closeCheckoutModal();
+      } else {
+        renderCheckoutCart();
+        renderCheckoutUpsells();
+        updateReceiptPreview();
+      }
+    }
+
+    function clearCart() {
+      cart = {};
+      saveCartToStorage();
+      updateCartUI(false);
+      if (activeCategory || searchQuery) renderMenuItems();
+      closeCheckoutModal();
+      showMicroToast('Cart cleared');
+    }
+
+    function renderCheckoutUpsells() {
+      const container = document.getElementById('checkoutUpsellChips');
+      const hintTag = document.getElementById('upsellHintTag');
+      const totals = getCartTotals();
+
+      if (orderType === 'delivery' && totals.remainingForFree > 0) {
+        hintTag.textContent = `Add Rs. ${totals.remainingForFree} for FREE Delivery`;
+        hintTag.className = 'text-[10px] font-bold text-wa';
+      } else {
+        hintTag.textContent = '1-Tap Add-Ons';
+        hintTag.className = 'text-[10px] font-semibold text-zinc-400';
+      }
+
+      container.innerHTML = UPSELL_ITEMS.map((up) => {
+        const unlocksFree = orderType === 'delivery' && totals.remainingForFree > 0 && up.price >= totals.remainingForFree;
+        return `
+          <button
+            type="button"
+            onclick="addUpsellItem(${up.id})"
+            class="p-2.5 rounded-xl border text-left transition-all active:scale-95 flex items-center justify-between gap-2 ${
+              unlocksFree
+                ? 'bg-wa/15 border-wa/50 text-white'
+                : 'bg-obsidian border-white/[0.08] hover:border-brand/40 text-zinc-200'
+            }"
+          >
+            <div class="min-w-0">
+              <div class="text-[11px] font-bold truncate">+ ${escapeHtml(up.name)}</div>
+              <div class="font-mono text-[10px] ${unlocksFree ? 'text-wa font-bold' : 'text-brand'}">
+                Rs. ${up.price}${unlocksFree ? ' • Unlocks Free Del!' : ''}
+              </div>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function addUpsellItem(upsellId) {
+      const up = UPSELL_ITEMS.find((u) => u.id === upsellId);
+      if (!up) return;
+      const key = `${up.id}__std`;
+      if (cart[key]) {
+        cart[key].qty += 1;
+      } else {
+        cart[key] = {
+          key,
+          id: up.id,
+          name: up.name,
+          category: up.category,
+          unitPrice: up.price,
+          qty: 1,
+          size: null,
+          extras: []
+        };
+      }
+      saveCartToStorage();
+      updateCartUI(true);
+      renderCheckoutCart();
+      renderCheckoutUpsells();
+      updateReceiptPreview();
+      showMicroToast(`+1 ${up.name}`);
+    }
+
+    function renderHaroonabadAreaPills() {
+      const host = document.getElementById('haroonabadAreaPills');
+      host.innerHTML = HAROONABAD_AREAS.map(
+        (area) => `
+          <button
+            type="button"
+            onclick="selectHaroonabadArea('${escapeHtml(area)}')"
+            class="px-2.5 py-1 rounded-lg bg-obsidian hover:bg-elevated border border-white/[0.09] hover:border-brand/50 text-[11px] font-semibold text-zinc-300 hover:text-brand active:scale-95 transition-all"
+          >
+            ${escapeHtml(area)}
+          </button>
+        `
+      ).join('');
+    }
+
+    function selectHaroonabadArea(area) {
+      const addrInput = document.getElementById('custAddressInput');
+      const current = addrInput.value.trim();
+      if (!current) {
+        addrInput.value = `${area}, Haroonabad`;
+      } else if (!current.toLowerCase().includes(area.toLowerCase())) {
+        addrInput.value = `${current} (${area})`;
+      }
+      addrInput.focus();
+      handleCustomerFieldChange();
+    }
+
+    function handleCustomerFieldChange() {
+      saveCustomerProfile();
+      updateReceiptPreview();
+    }
+
+    function setOrderType(type) {
+      orderType = type;
+      const btnDel = document.getElementById('btnTypeDelivery');
+      const btnDine = document.getElementById('btnTypeDineIn');
+      const delFields = document.getElementById('deliveryFields');
+      const dineFields = document.getElementById('dineInFields');
+
+      if (type === 'dinein') {
+        btnDine.className = 'py-2 rounded-lg text-xs font-extrabold transition-all bg-brand text-obsidian';
+        btnDel.className = 'py-2 rounded-lg text-xs font-extrabold transition-all text-zinc-400 hover:text-white';
+        dineFields.classList.remove('hidden');
+        delFields.classList.add('hidden');
+      } else {
+        btnDel.className = 'py-2 rounded-lg text-xs font-extrabold transition-all bg-brand text-obsidian';
+        btnDine.className = 'py-2 rounded-lg text-xs font-extrabold transition-all text-zinc-400 hover:text-white';
+        delFields.classList.remove('hidden');
+        dineFields.classList.add('hidden');
+      }
+
+      renderCheckoutUpsells();
+      updateReceiptPreview();
+    }
+
+    function setPaymentMethod(method, skipSave) {
+      paymentMethod = method;
+      document.querySelectorAll('.pay-pill').forEach((btn) => {
+        const active = btn.getAttribute('data-pay') === method;
+        btn.className = active
+          ? 'pay-pill py-2 rounded-xl border text-xs font-bold transition-all bg-brand/15 border-brand text-brand'
+          : 'pay-pill py-2 rounded-xl border text-xs font-bold transition-all bg-obsidian border-white/[0.09] text-zinc-400';
+      });
+      if (!skipSave) saveCustomerProfile();
+      updateReceiptPreview();
+    }
+
+    function buildWhatsAppReceiptText() {
+      const totals = getCartTotals();
+      const lines = [];
+      lines.push(`*${config.storeName}*`);
+      lines.push(`Order Type: *${orderType === 'dinein' ? 'DINE-IN' : 'HOME DELIVERY'}*`);
+
+      if (orderType === 'dinein') {
+        const tbl = (document.getElementById('custTableInput')?.value || '').trim() || 'Not specified';
+        lines.push(`Table #: *${tbl}*`);
+      } else {
+        const name = (document.getElementById('custNameInput')?.value || '').trim() || 'Customer';
+        const phone = (document.getElementById('custPhoneInput')?.value || '').trim() || '-';
+        const addr = (document.getElementById('custAddressInput')?.value || '').trim() || '-';
+        lines.push(`Name: ${name}`);
+        lines.push(`Phone: ${phone}`);
+        lines.push(`Address: ${addr}`);
+      }
+
+      lines.push('------------------------');
+      totals.entries.forEach((item) => {
+        const sizeStr = item.size ? ` (${item.size})` : '';
+        lines.push(`${item.qty}x ${item.name}${sizeStr} — Rs. ${(item.unitPrice * item.qty).toLocaleString()}`);
+        if (item.extras && item.extras.length) {
+          lines.push(`   + ${item.extras.join(', ')}`);
+        }
+      });
+      lines.push('------------------------');
+      lines.push(`Subtotal: Rs. ${totals.subtotal.toLocaleString()}`);
+      if (orderType === 'delivery') {
+        lines.push(`Delivery: ${totals.deliveryFee === 0 ? 'FREE (Rs. 500+)' : 'Rs. ' + totals.deliveryFee}`);
+      }
+      lines.push(`*Grand Total: Rs. ${totals.grandTotal.toLocaleString()}*`);
+      lines.push(`Payment: *${paymentMethod}*`);
+
+      const notes = (document.getElementById('custNotesInput')?.value || '').trim();
+      if (notes) lines.push(`Notes: ${notes}`);
+
+      return lines.join('\n');
+    }
+
+    function updateReceiptPreview() {
+      const totals = getCartTotals();
+      document.getElementById('sumSubtotal').textContent = `Rs. ${totals.subtotal.toLocaleString()}`;
+
+      if (orderType === 'dinein') {
+        document.getElementById('sumDeliveryLabel').textContent = 'Dine-In Service';
+        document.getElementById('sumDeliveryFee').textContent = 'FREE';
+        document.getElementById('sumDeliveryFee').className = 'font-mono font-bold text-wa tabular-nums';
+      } else {
+        document.getElementById('sumDeliveryLabel').textContent = `Haroonabad Delivery (Free Rs. ${totals.freeMin}+)`;
+        if (totals.deliveryFee === 0) {
+          document.getElementById('sumDeliveryFee').textContent = 'FREE';
+          document.getElementById('sumDeliveryFee').className = 'font-mono font-bold text-wa tabular-nums';
+        } else {
+          document.getElementById('sumDeliveryFee').textContent = `Rs. ${totals.deliveryFee}`;
+          document.getElementById('sumDeliveryFee').className = 'font-mono font-semibold text-white tabular-nums';
+        }
+      }
+
+      document.getElementById('sumGrandTotal').textContent = `Rs. ${totals.grandTotal.toLocaleString()}`;
+      document.getElementById('waReceiptPreview').textContent = buildWhatsAppReceiptText();
+    }
+
+    function sendOrderToWhatsApp() {
+      const errBox = document.getElementById('checkoutErrorBox');
+      errBox.classList.add('hidden');
+
+      if (orderType === 'dinein') {
+        const tbl = (document.getElementById('custTableInput').value || '').trim();
+        if (!tbl) {
+          errBox.textContent = 'Please enter your Table Number before sending your order.';
+          errBox.classList.remove('hidden');
+          return;
+        }
+      } else {
+        const name = (document.getElementById('custNameInput').value || '').trim();
+        const phone = (document.getElementById('custPhoneInput').value || '').trim();
+        const addr = (document.getElementById('custAddressInput').value || '').trim();
+        if (!name || !phone || !addr) {
+          errBox.textContent = 'Please enter your Name, Mobile Number, and Haroonabad Address.';
+          errBox.classList.remove('hidden');
+          return;
+        }
+        saveCustomerProfile();
+      }
+
+      const phoneClean = String(config.whatsappNumber || '923032253333').replace(/[^0-9]/g, '');
+      const text = encodeURIComponent(buildWhatsAppReceiptText());
+      const waUrl = `https://wa.me/${phoneClean}?text=${text}`;
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    /* =========================================================
+       OWNER SETUP, PRINTABLE QR STICKER & MENU EDITOR
+    ========================================================= */
+    function openSetupModal() {
+      document.getElementById('cfgStoreName').value = config.storeName;
+      document.getElementById('cfgWhatsapp').value = config.whatsappNumber;
+      document.getElementById('cfgDeliveryFee').value = config.deliveryFee;
+      document.getElementById('cfgFreeMin').value = config.freeDeliveryMin;
+      document.getElementById('cfgSheetCsvUrl').value = config.sheetCsvUrl || '';
+
+      switchSetupTab('qr');
+      renderPrintableStickerCanvas();
+      renderMenuEditorList();
+      document.getElementById('setupBackdrop').classList.add('is-open');
+    }
+
+    function closeSetupModal() {
+      document.getElementById('setupBackdrop').classList.remove('is-open');
+    }
+
+    function closeSetupOnBackdrop(e) {
+      if (e.target.id === 'setupBackdrop') closeSetupModal();
+    }
+
+    function switchSetupTab(tab) {
+      const isQr = tab === 'qr';
+      document.getElementById('setupTabQr').classList.toggle('hidden', !isQr);
+      document.getElementById('setupTabMenu').classList.toggle('hidden', isQr);
+
+      document.getElementById('tabBtnQr').className = isQr
+        ? 'py-2 rounded-lg text-xs font-extrabold bg-brand text-obsidian'
+        : 'py-2 rounded-lg text-xs font-extrabold text-zinc-400 hover:text-white';
+      document.getElementById('tabBtnMenu').className = !isQr
+        ? 'py-2 rounded-lg text-xs font-extrabold bg-brand text-obsidian'
+        : 'py-2 rounded-lg text-xs font-extrabold text-zinc-400 hover:text-white';
+    }
+
+    function saveStoreSettingsFromForm() {
+      config.storeName = document.getElementById('cfgStoreName').value.trim() || DEFAULT_CONFIG.storeName;
+      config.whatsappNumber = document.getElementById('cfgWhatsapp').value.trim() || DEFAULT_CONFIG.whatsappNumber;
+      config.deliveryFee = Math.max(0, Number(document.getElementById('cfgDeliveryFee').value) || 0);
+      config.freeDeliveryMin = Math.max(0, Number(document.getElementById('cfgFreeMin').value) || 500);
+      saveConfig();
+      applyConfigToUI();
+      updateCartUI(false);
+      renderPrintableStickerCanvas();
+
+      const toast = document.getElementById('cfgSaveToast');
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2000);
+    }
+
+    function applyConfigToUI() {
+      document.getElementById('headerStoreName').textContent = config.storeName;
+      document.getElementById('bannerFreeDeliveryTag').textContent = `Free Delivery on Rs. ${config.freeDeliveryMin}+`;
+    }
+
+    function renderPrintableStickerCanvas() {
+      const canvas = document.getElementById('tableStickerCanvas');
+      const ctx = canvas.getContext('2d');
+      const tableVal = (document.getElementById('qrTableNumberInput')?.value || '').trim();
+
+      const baseUrl = window.location.href.split('#')[0].split('?')[0];
+      const targetUrl = tableVal ? `${baseUrl}?table=${encodeURIComponent(tableVal)}` : baseUrl;
+      document.getElementById('qrEncodedUrlLabel').textContent = targetUrl;
+
+      // Draw Sticker Background
+      ctx.fillStyle = '#0A0A0C';
+      ctx.fillRect(0, 0, 320, 400);
+
+      // Gold Border Frame
+      ctx.strokeStyle = '#FACC15';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(12, 12, 296, 376);
+
+      // Brand Header
+      ctx.fillStyle = '#FACC15';
+      ctx.font = '800 20px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(config.storeName.toUpperCase(), 160, 48);
+
+      ctx.fillStyle = '#A1A1AA';
+      ctx.font = '600 11px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('DINE DESIRED • HAROONABAD', 160, 68);
+
+      // Table Pill
+      if (tableVal) {
+        ctx.fillStyle = '#FACC15';
+        ctx.fillRect(85, 82, 150, 30);
+        ctx.fillStyle = '#0A0A0C';
+        ctx.font = '800 14px "JetBrains Mono", monospace';
+        ctx.fillText(`TABLE #${tableVal.toUpperCase()}`, 160, 102);
+      } else {
+        ctx.fillStyle = '#1A1A20';
+        ctx.fillRect(70, 82, 180, 30);
+        ctx.fillStyle = '#FACC15';
+        ctx.font = '700 12px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('DIRECT WHATSAPP MENU', 160, 102);
+      }
+
+      // White QR Container Box
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(65, 128, 190, 190);
+
+      // Render QR via QRCode.js if available, else fallback pattern
+      const holder = document.getElementById('hiddenQrHolder');
+      holder.innerHTML = '';
+      if (typeof QRCode !== 'undefined') {
+        try {
+          new QRCode(holder, {
+            text: targetUrl,
+            width: 170,
+            height: 170,
+            colorDark: '#0A0A0C',
+            colorLight: '#FFFFFF',
+            correctLevel: QRCode.CorrectLevel.M
+          });
+          setTimeout(() => {
+            const qrImg = holder.querySelector('img') || holder.querySelector('canvas');
+            if (qrImg) {
+              ctx.drawImage(qrImg, 75, 138, 170, 170);
+            }
+          }, 60);
+        } catch (e) {
+          drawFallbackQrMatrix(ctx, 75, 138, 170);
+        }
+      } else {
+        drawFallbackQrMatrix(ctx, 75, 138, 170);
+      }
+
+      // Footer Callout
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '800 14px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('SCAN TO VIEW MENU & ORDER', 160, 348);
+
+      ctx.fillStyle = '#22C55E';
+      ctx.font = '700 11px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('Instant WhatsApp Ordering • 0% Fee', 160, 368);
+    }
+
+    function drawFallbackQrMatrix(ctx, x, y, size) {
+      ctx.fillStyle = '#0A0A0C';
+      const cells = 17;
+      const cell = size / cells;
+      for (let r = 0; r < cells; r++) {
+        for (let c = 0; c < cells; c++) {
+          const isFinder = (r < 5 && c < 5) || (r < 5 && c >= cells - 5) || (r >= cells - 5 && c < 5);
+          if (isFinder || (r * 7 + c * 13) % 3 === 0) {
+            ctx.fillRect(x + c * cell, y + r * cell, cell - 0.5, cell - 0.5);
+          }
+        }
+      }
+    }
+
+    function downloadTableStickerPng() {
+      const canvas = document.getElementById('tableStickerCanvas');
+      const tableVal = (document.getElementById('qrTableNumberInput')?.value || '').trim() || 'menu';
+      const link = document.createElement('a');
+      link.download = `DENSIRE-Table-${tableVal}-QR.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function renderMenuEditorList() {
+      const host = document.getElementById('menuEditorList');
+      host.innerHTML = menuItems
+        .map(
+          (item) => `
+            <div class="p-2.5 rounded-xl bg-obsidian border border-white/[0.07] flex items-center justify-between gap-2">
+              <div class="min-w-0 flex-1">
+                <div class="text-[10px] text-brand font-bold">${escapeHtml(item.category)}</div>
+                <input
+                  type="text"
+                  value="${escapeHtml(item.name)}"
+                  onchange="updateMenuItemField(${item.id}, 'name', this.value)"
+                  class="w-full bg-transparent text-xs font-bold text-white focus:outline-none border-b border-transparent focus:border-brand"
+                />
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <input
+                  type="number"
+                  value="${Number(item.price)}"
+                  onchange="updateMenuItemField(${item.id}, 'price', Number(this.value))"
+                  class="w-20 px-2 py-1 rounded-lg bg-surface border border-white/[0.1] font-mono text-xs text-brand text-right"
+                />
+                <button
+                  type="button"
+                  onclick="toggleMenuItemStock(${item.id})"
+                  class="px-2.5 py-1 rounded-lg text-[10px] font-extrabold ${
+                    item.available !== false
+                      ? 'bg-wa/15 text-wa border border-wa/30'
+                      : 'bg-red-500/15 text-red-400 border border-red-500/30'
+                  }"
+                >
+                  ${item.available !== false ? 'In Stock' : 'Out'}
+                </button>
+              </div>
+            </div>
+          `
+        )
+        .join('');
+    }
+
+    function updateMenuItemField(id, field, value) {
+      const item = menuItems.find((i) => i.id === id);
+      if (!item) return;
+      item[field] = value;
+      saveMenuItems();
+      renderCategoryGrid();
+      if (activeCategory || searchQuery) renderMenuItems();
+    }
+
+    function toggleMenuItemStock(id) {
+      const item = menuItems.find((i) => i.id === id);
+      if (!item) return;
+      item.available = item.available === false;
+      saveMenuItems();
+      renderMenuEditorList();
+      if (activeCategory || searchQuery) renderMenuItems();
+    }
+
+    function addNewMenuItem() {
+      const category = document.getElementById('newItemCat').value;
+      const name = document.getElementById('newItemName').value.trim();
+      const price = Number(document.getElementById('newItemPrice').value);
+      if (!name || !price) return;
+
+      const meta = getCategoryMeta(category);
+      menuItems.unshift({
+        id: Date.now(),
+        category,
+        name,
+        price,
+        desc: 'Freshly prepared at DENSIRE Haroonabad.',
+        image: meta.coverImg,
+        available: true
+      });
+      saveMenuItems();
+      document.getElementById('newItemName').value = '';
+      document.getElementById('newItemPrice').value = '';
+      renderMenuEditorList();
+      renderCategoryGrid();
+      if (activeCategory || searchQuery) renderMenuItems();
+      showMicroToast(`Added ${name}`);
+    }
+
+    function resetDefaultMenu() {
+      menuItems = JSON.parse(JSON.stringify(DEFAULT_MENU_ITEMS));
+      saveMenuItems();
+      initDefaultSizes();
+      renderMenuEditorList();
+      renderCategoryGrid();
+      if (activeCategory || searchQuery) renderMenuItems();
+      showMicroToast('Default 35-item menu restored');
+    }
+
+    async function syncFromGoogleSheet() {
+      const url = document.getElementById('cfgSheetCsvUrl').value.trim();
+      const status = document.getElementById('sheetSyncStatus');
+      if (!url) {
+        status.textContent = 'Please paste a published CSV link first.';
+        return;
+      }
+      config.sheetCsvUrl = url;
+      saveConfig();
+      status.textContent = 'Syncing menu from Google Sheets...';
+
+      try {
+        const res = await fetch(url);
+        const csv = await res.text();
+        const rows = csv.trim().split('\n').slice(1);
+        const parsed = rows
+          .map((line, idx) => {
+            const cols = line.split(',');
+            if (cols.length < 4) return null;
+            const [id, category, name, price, desc, image, available] = cols.map((c) => c.trim().replace(/^"|"$/g, ''));
+            const catValid = CATEGORIES.some((c) => c.id === category) ? category : 'Den-Deals';
+            return {
+              id: Number(id) || 800 + idx,
+              category: catValid,
+              name: name || 'Menu Item',
+              price: Number(price) || 250,
+              desc: desc || 'Freshly prepared to order.',
+              image: image || getCategoryMeta(catValid).coverImg,
+              available: (available || 'yes').toLowerCase() !== 'no'
+            };
+          })
+          .filter(Boolean);
+
+        if (parsed.length > 0) {
+          menuItems = parsed;
+          saveMenuItems();
+          renderMenuEditorList();
+          renderCategoryGrid();
+          if (activeCategory || searchQuery) renderMenuItems();
+          status.textContent = `Synced ${parsed.length} items successfully!`;
+        } else {
+          status.textContent = 'No valid rows found in CSV.';
+        }
+      } catch (err) {
+        status.textContent = 'Could not fetch CSV. Check that the sheet is Published to Web.';
+      }
+    }
+
+    /* =========================================================
+       UTILITIES & INITIALIZATION
+    ========================================================= */
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function showMicroToast(message) {
+      const host = document.getElementById('toastHost');
+      if (!host) return;
+      host.innerHTML = `
+        <div class="micro-toast px-3.5 py-2 rounded-full bg-elevated border border-brand/50 text-xs font-extrabold text-brand shadow-xl whitespace-nowrap">
+          ${escapeHtml(message)}
+        </div>
+      `;
+    }
+
+    function detectTableFromUrl() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const tableParam = params.get('table');
+        if (tableParam && tableParam.trim()) {
+          const cleanTable = tableParam.trim();
+          const badge = document.getElementById('headerTableBadge');
+          badge.textContent = `Table #${cleanTable}`;
+          badge.classList.remove('hidden');
+
+          document.getElementById('custTableInput').value = cleanTable;
+          setOrderType('dinein');
+        }
+      } catch (e) {}
+    }
+
+    function syncRouteFromHash() {
+      const hash = window.location.hash || '';
+      if (hash.startsWith('#cat-')) {
+        const catId = decodeURIComponent(hash.slice(5));
+        if (CATEGORIES.some((c) => c.id === catId)) {
+          activeCategory = catId;
+          showCategoryItemsView();
+          return;
+        }
+      }
+      goHomeCategories(true);
+    }
+
+    window.addEventListener('hashchange', syncRouteFromHash);
+    window.addEventListener('resize', () => {
+      if (activeCategory) positionActivePillGlider();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initDefaultSizes();
+      applyConfigToUI();
+      renderHaroonabadAreaPills();
+      loadSavedCustomerProfile();
+      detectTableFromUrl();
+      renderCategoryGrid();
+      syncRouteFromHash();
+      updateCartUI(false);
+    });
+  </script>
+</body>
+</html>
