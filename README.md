@@ -37,7 +37,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Admin sign-in
 
-Admin access requires server-only credentials. Create an ignored `.env.local` file in the project root:
+Open `/admin` to manage orders and restaurant settings. Admin access requires server-only credentials. Create an ignored `.env.local` file in the project root:
 
 ```dotenv
 ADMIN_PASSWORD="choose a unique password with at least 12 characters"
