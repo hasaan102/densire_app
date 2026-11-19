@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DENSIRE HAROONABAD — WhatsApp Menu & QR Ordering",
-  description: "Browse the DENSIRE menu and send your order directly on WhatsApp.",
+  title: "DENSIRE HAROONABAD — Order Online",
+  description: "Explore the DENSIRE menu, order online, and choose dine-in, pick-up, or home delivery.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

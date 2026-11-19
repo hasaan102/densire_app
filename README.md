@@ -34,3 +34,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Admin sign-in
+
+Admin access requires server-only credentials. Create an ignored `.env.local` file in the project root:
+
+```dotenv
+ADMIN_PASSWORD="choose a unique password with at least 12 characters"
+ADMIN_SESSION_SECRET="paste a random secret with at least 32 characters"
+```
+
+Generate a secret with `node -p "require('node:crypto').randomBytes(32).toString('hex')"` and keep `.env.local` out of source control. Restart the dev server after changing these values. Admin sessions expire after eight hours.
+
+The current menu and order data still use browser storage, so they are not shared across customer and admin devices.
