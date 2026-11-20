@@ -1,22 +1,12 @@
 import {
-  createHash,
-  createHmac,
-  timingSafeEqual,
-} from "node:crypto";
+  getAdminAuthConfig,
+  hasValidAdminSession,
+  safeEqual,
+  signAdminExpiry,
+} from "@/app/lib/admin-auth";
 
 const COOKIE_NAME = "densire_admin_session";
 const SESSION_DURATION_SECONDS = 60 * 60 * 8;
-
-function getAuthConfig() {
-  const password = process.env.ADMIN_PASSWORD;
-  const secret = process.env.ADMIN_SESSION_SECRET;
-
-  if (!password || password.length < 12 || !secret || secret.length < 32) {
-    return null;
-  }
-
-  return { password, secret };
-}
 
 function jsonResponse(
   body: Record<string, string | boolean>,
@@ -27,45 +17,13 @@ function jsonResponse(
   return Response.json(body, { status, headers });
 }
 
-function signExpiry(expiry: string, secret: string) {
-  return createHmac("sha256", secret).update(expiry).digest("base64url");
-}
-
-function safeEqual(left: string, right: string) {
-  const leftHash = createHash("sha256").update(left).digest();
-  const rightHash = createHash("sha256").update(right).digest();
-  return timingSafeEqual(leftHash, rightHash);
-}
-
-function getCookie(request: Request, name: string) {
-  const cookieHeader = request.headers.get("cookie");
-  if (!cookieHeader) return null;
-
-  const prefix = `${name}=`;
-  const cookie = cookieHeader.split(";").map((part) => part.trim())
-    .find((part) => part.startsWith(prefix));
-  return cookie ? cookie.slice(prefix.length) : null;
-}
-
-function hasValidSession(request: Request, secret: string) {
-  const token = getCookie(request, COOKIE_NAME);
-  if (!token) return false;
-
-  const [expiry, signature, ...extra] = token.split(".");
-  if (extra.length || !/^\d+$/.test(expiry) || Number(expiry) <= Date.now()) {
-    return false;
-  }
-
-  return safeEqual(signature, signExpiry(expiry, secret));
-}
-
 function cookieOptions(maxAge: number) {
   const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
   return `${COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${secure}`;
 }
 
 export async function GET(request: Request) {
-  const config = getAuthConfig();
+  const config = getAdminAuthConfig();
   if (!config) {
     return jsonResponse({
       authenticated: false,
@@ -73,7 +31,7 @@ export async function GET(request: Request) {
     }, 503);
   }
 
-  if (!hasValidSession(request, config.secret)) {
+  if (!hasValidAdminSession(request, config.secret)) {
     return jsonResponse({ authenticated: false }, 401);
   }
 
@@ -81,7 +39,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const config = getAuthConfig();
+  const config = getAdminAuthConfig();
   if (!config) {
     return jsonResponse({
       authenticated: false,
@@ -117,7 +75,7 @@ export async function POST(request: Request) {
   }
 
   const expiry = String(Date.now() + SESSION_DURATION_SECONDS * 1000);
-  const token = `${expiry}.${signExpiry(expiry, config.secret)}`;
+  const token = `${expiry}.${signAdminExpiry(expiry, config.secret)}`;
   const headers = new Headers();
   headers.set(
     "Set-Cookie",

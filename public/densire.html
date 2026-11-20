@@ -678,6 +678,7 @@
       <div class="p-4 border-t border-white/[0.08] bg-obsidian/80 shrink-0">
         <button
           type="button"
+          id="placeOrderButton"
           onclick="placeOrder()"
           class="w-full py-3.5 rounded-2xl bg-brand hover:bg-brandHover text-obsidian font-extrabold text-sm flex items-center justify-center gap-2 shadow-xl shadow-brand/20 active:scale-[0.99] transition-all"
         >
@@ -718,7 +719,7 @@
       menu: 'densire_hbd_menu_v4',
       cart: 'densire_hbd_cart_v4',
       customer: 'densire_hbd_customer_v4',
-      orders: 'densire_hbd_orders_v1'
+      orders: 'densire_hbd_orders_v1',
     };
 
     const DEFAULT_CONFIG = {
@@ -880,9 +881,7 @@
 
     // Global State
     let config = loadConfig();
-    CATEGORIES = Array.isArray(config.categories) && config.categories.length
-      ? config.categories
-      : CATEGORIES;
+    CATEGORIES = mergeConfiguredCategories(config.categories);
     let menuItems = loadMenuItems();
     let orders = loadOrders();
     let cart = loadSavedCart(); // { key: { key, id, name, category, unitPrice, qty, size, extras } }
@@ -892,6 +891,7 @@
     let orderType = 'delivery';
     let paymentMethod = 'Cash';
     let paymentScreenshot = '';
+    let orderSubmissionInProgress = false;
     let currentReceipt = null;
     let customizerState = { item: null, size: null, selectedExtraIds: [] };
 
@@ -913,6 +913,34 @@
       return { ...DEFAULT_CONFIG };
     }
 
+    function mergeConfiguredCategories(configuredCategories) {
+      const categories = new Map(DEFAULT_CATEGORIES.map((category) => [category.id, { ...category }]));
+      if (!Array.isArray(configuredCategories)) return [...categories.values()];
+
+      configuredCategories.forEach((category) => {
+        const id = typeof category === 'string'
+          ? category.trim()
+          : category && typeof category.id === 'string'
+            ? category.id.trim()
+            : '';
+        if (!id) return;
+        const existing = categories.get(id) || {
+          id,
+          title: id,
+          subtitle: 'Freshly prepared to order',
+          fallbackKey: 'burger',
+          coverImg: ''
+        };
+        categories.set(id, {
+          ...existing,
+          ...(typeof category === 'object' && category ? category : {}),
+          id
+        });
+      });
+
+      return [...categories.values()];
+    }
+
     function saveConfig() {
       try {
         config.categories = CATEGORIES;
@@ -929,14 +957,20 @@
         const raw = localStorage.getItem(STORAGE_KEYS.menu);
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed)) {
             return parsed;
           }
         }
       } catch (e) {
         console.warn('Menu load skipped:', e);
       }
-      return JSON.parse(JSON.stringify(DEFAULT_MENU_ITEMS));
+      const defaults = JSON.parse(JSON.stringify(DEFAULT_MENU_ITEMS));
+      try {
+        localStorage.setItem(STORAGE_KEYS.menu, JSON.stringify(defaults));
+      } catch (error) {
+        console.warn('Default menu could not be saved:', error);
+      }
+      return defaults;
     }
 
     function saveMenuItems() {
@@ -969,14 +1003,19 @@
         const raw = localStorage.getItem(STORAGE_KEYS.orders);
         const parsed = raw ? JSON.parse(raw) : [];
         return Array.isArray(parsed) ? parsed : [];
-      } catch (e) {
-        console.warn('Order history load skipped:', e);
+      } catch (error) {
+        console.warn('Order history load skipped:', error);
         return [];
       }
     }
 
     function saveOrders() {
       localStorage.setItem(STORAGE_KEYS.orders, JSON.stringify(orders));
+    }
+
+    function canUseLocalOrderFallback() {
+      return window.location.hostname === 'localhost'
+        || window.location.hostname === '127.0.0.1';
     }
 
     function saveCartToStorage() {
@@ -2102,7 +2141,8 @@
       URL.revokeObjectURL(url);
     }
 
-    function placeOrder() {
+    async function placeOrder() {
+      if (orderSubmissionInProgress) return;
       const errBox = document.getElementById('checkoutErrorBox');
       errBox.classList.add('hidden');
       const name = document.getElementById('custNameInput').value.trim();
@@ -2138,7 +2178,7 @@
 
       const totals = getCartTotals();
       const order = {
-        id: `DS-${Date.now().toString(36).toUpperCase()}`,
+        id: `DS-${Date.now().toString(36).toUpperCase()}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
         createdAt: new Date().toISOString(),
         status: 'New',
         orderType,
@@ -2153,14 +2193,34 @@
         notes: document.getElementById('custNotesInput').value.trim()
       };
 
+      orderSubmissionInProgress = true;
+      const submitButton = document.getElementById('placeOrderButton');
+      submitButton.disabled = true;
       try {
-        orders.unshift(order);
-        saveOrders();
+        if (canUseLocalOrderFallback()) {
+          orders.unshift(order);
+          saveOrders();
+        } else {
+          const response = await fetch('/api/orders', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order })
+          });
+          const result = await response.json();
+          if (!response.ok) {
+            throw new Error(result.error || 'Order submission failed.');
+          }
+        }
       } catch (error) {
-        orders.shift();
-        console.error('Order could not be saved:', error);
-        showCheckoutError('We could not save your order in this browser. Please try again or contact the restaurant.');
+        console.error('Order could not be submitted:', error);
+        showCheckoutError(error instanceof Error
+          ? error.message
+          : 'We could not submit your order. Please try again or contact the restaurant.');
         return;
+      } finally {
+        orderSubmissionInProgress = false;
+        submitButton.disabled = false;
       }
 
       saveCustomerProfile();
@@ -2228,7 +2288,7 @@
     window.addEventListener('storage', (event) => {
       if (event.key === STORAGE_KEYS.config) {
         config = loadConfig();
-        CATEGORIES = Array.isArray(config.categories) && config.categories.length ? config.categories : DEFAULT_CATEGORIES;
+        CATEGORIES = mergeConfiguredCategories(config.categories);
         applyConfigToUI();
         renderAvailableTables();
         renderCategoryGrid();

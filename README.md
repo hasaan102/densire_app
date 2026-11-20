@@ -42,8 +42,12 @@ Open `/admin` to manage orders and restaurant settings. Admin access requires se
 ```dotenv
 ADMIN_PASSWORD="choose a unique password with at least 12 characters"
 ADMIN_SESSION_SECRET="paste a random secret with at least 32 characters"
+SUPABASE_URL="your Supabase project URL"
+SUPABASE_SERVICE_ROLE_KEY="your Supabase service role key"
 ```
 
-Generate a secret with `node -p "require('node:crypto').randomBytes(32).toString('hex')"` and keep `.env.local` out of source control. Restart the dev server after changing these values. Admin sessions expire after eight hours.
+Generate a session secret with `node -p "require('node:crypto').randomBytes(32).toString('hex')"` and keep `.env.local` out of source control. Restart the dev server after changing these values. Admin sessions expire after eight hours.
 
-The current menu and order data still use browser storage, so they are not shared across customer and admin devices.
+## Shared order storage
+
+Orders are stored in Supabase so the admin dashboard can receive customer orders across devices. In the Supabase SQL Editor, run [`supabase/schema.sql`](./supabase/schema.sql). Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to the project’s Vercel Production environment as **Secret** variables, then redeploy. Keep the service role key server-side; never expose it in browser code or commit it to GitHub. The admin dashboard refreshes orders every 10 seconds.
